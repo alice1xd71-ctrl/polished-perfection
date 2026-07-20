@@ -178,7 +178,7 @@ function StandingOrdersPage() {
     orderBy: { column: "created_at", ascending: false },
     limit: 100,
   });
-  const markets = useRealtimeList<Btc5mMarket>("btc5m_markets", uid, {
+  const markets = useRealtimeList<Btc5mMarket, "market_id">("btc5m_markets", uid, {
     primaryKey: "market_id",
     orderBy: { column: "slot_start_ms", ascending: false },
     limit: 20,
