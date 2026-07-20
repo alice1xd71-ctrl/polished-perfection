@@ -189,7 +189,7 @@ function OperationsPage() {
                       <p className="text-xs text-muted-foreground">
                         {f.last_message_at ? `msg ${fmtAgo(f.last_message_at)}` : "no messages"} · {fmtMs(f.latency_ms ?? null)}
                       </p>
-                      {f.last_error && <p className="mt-0.5 truncate text-xs text-red-500">{f.last_error}</p>}
+                      {readErr(f) && <p className="mt-0.5 truncate text-xs text-red-500">{readErr(f)}</p>}
                     </div>
                     <FeedBadge status={f.status} />
                   </li>
