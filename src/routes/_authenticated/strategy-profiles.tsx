@@ -433,7 +433,7 @@ function ProfileDetail({ profile, onEdit }: { profile: ProfileRow; onEdit: () =>
                 description="This permanently removes the profile and its version history. This cannot be undone."
                 confirmLabel="Delete"
                 destructive
-                onConfirm={remove}
+                onConfirm={async () => { await remove(); }}
               />
             </DropdownMenuContent>
           </DropdownMenu>
