@@ -222,8 +222,8 @@ function DashboardPage() {
                   <Metric label="Best Bid" value={fmtPrice(yesBid)} />
                   <Metric label="Best Ask" value={fmtPrice(yesAsk)} />
                   <Metric label="Spread" value={spread === null ? "—" : fmtPrice(spread)} />
-                  <Metric label="Volume" value={fmtNum(readMeta(activeMarket, "volume"))} />
-                  <Metric label="Liquidity" value={fmtNum(readMeta(activeMarket, "liquidity"))} />
+                  <Metric label="Volume" value={fmtNum(readMetaNum(activeMarket, "volume"))} />
+                  <Metric label="Liquidity" value={fmtNum(readMetaNum(activeMarket, "liquidity"))} />
                   <Metric label="Majority" value={readMeta(activeMarket, "majority_side") ?? "—"} />
                 </div>
                 <p className="text-xs text-muted-foreground">
