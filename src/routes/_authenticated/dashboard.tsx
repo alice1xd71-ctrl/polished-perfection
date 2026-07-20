@@ -1,84 +1,93 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { PageHeader } from "@/components/app/page-header";
+import { StatCard } from "@/components/app/data-card";
 import { supabase } from "@/integrations/supabase/client";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Activity, TrendingUp, Wallet, HeartPulse } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
-    meta: [
-      { title: "Dashboard — P4 Bot" },
-      { name: "robots", content: "noindex" },
-    ],
+    meta: [{ title: "Dashboard — P4 Bot" }, { name: "robots", content: "noindex" }],
   }),
-  component: Dashboard,
+  component: DashboardPage,
 });
 
-function Dashboard() {
-  const navigate = useNavigate();
-  const [email, setEmail] = useState<string>("");
-  const [role, setRole] = useState<string>("…");
+function DashboardPage() {
+  const [counts, setCounts] = useState({ trades: "—", orders: "—", profiles: "—", beats: "—" });
 
   useEffect(() => {
     (async () => {
-      const { data: u } = await supabase.auth.getUser();
-      setEmail(u.user?.email ?? "");
-      if (u.user) {
-        const { data: r } = await supabase.from("user_roles").select("role").eq("user_id", u.user.id);
-        setRole(r?.map((x) => x.role).join(", ") || "none");
-      }
+      const [t, o, p, h] = await Promise.all([
+        supabase.from("trades").select("id", { count: "exact", head: true }),
+        supabase.from("order_intents").select("id", { count: "exact", head: true }),
+        supabase.from("strategy_profiles").select("id", { count: "exact", head: true }),
+        supabase.from("engine_heartbeats").select("user_id", { count: "exact", head: true }),
+      ]);
+      setCounts({
+        trades: t.count?.toLocaleString() ?? "0",
+        orders: o.count?.toLocaleString() ?? "0",
+        profiles: p.count?.toLocaleString() ?? "0",
+        beats: h.count?.toLocaleString() ?? "0",
+      });
     })();
   }, []);
 
-  async function signOut() {
-    await supabase.auth.signOut();
-    navigate({ to: "/auth", replace: true });
-  }
-
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <header className="border-b border-border">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-md bg-primary" />
-            <span className="text-lg font-semibold tracking-tight">P4 Bot</span>
-          </div>
-          <div className="flex items-center gap-4 text-sm">
-            <span className="text-muted-foreground">{email}</span>
-            <span className="rounded-md bg-muted px-2 py-1 text-xs font-medium uppercase tracking-wide">
-              {role}
-            </span>
-            <button
-              onClick={signOut}
-              className="rounded-md border border-input px-3 py-1.5 hover:bg-accent"
-            >
-              Sign out
-            </button>
-          </div>
-        </div>
-      </header>
+    <>
+      <PageHeader
+        title="Dashboard"
+        description="Live overview of your Polymarket trading engine."
+      />
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StatCard label="Trades" value={counts.trades} hint="All time" />
+        <StatCard label="Order intents" value={counts.orders} hint="Queue" />
+        <StatCard label="Profiles" value={counts.profiles} hint="Strategy snapshots" />
+        <StatCard label="Engines" value={counts.beats} hint="Reporting heartbeats" />
+      </div>
 
-      <main className="mx-auto max-w-6xl px-6 py-10">
-        <h1 className="text-3xl font-semibold tracking-tight">Dashboard</h1>
-        <p className="mt-2 text-muted-foreground">
-          Milestone 1 complete — authentication, database schema, and RLS are live.
-          Trading UI ships in the next milestones.
-        </p>
-
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {[
-            { label: "Strategy profiles", value: "Milestone 5" },
-            { label: "Standing orders", value: "Milestone 5" },
-            { label: "Ledger", value: "Milestone 4" },
-            { label: "Analytics", value: "Milestone 4" },
-            { label: "Trade replay", value: "Milestone 4" },
-            { label: "Engine health", value: "Milestone 4" },
-          ].map((c) => (
-            <div key={c.label} className="rounded-lg border border-border p-5">
-              <p className="text-sm text-muted-foreground">{c.label}</p>
-              <p className="mt-1 text-lg font-medium">{c.value}</p>
-            </div>
-          ))}
-        </div>
-      </main>
-    </div>
+      <div className="mt-6 grid gap-4 lg:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-base">
+              <Activity className="h-4 w-4" /> Engine status
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="text-sm text-muted-foreground">
+            The external Node engine reports its status via heartbeats. Detailed monitoring lives on the Health page.
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-base">
+              <TrendingUp className="h-4 w-4" /> Recent activity
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="text-sm text-muted-foreground">
+            Trade and order feeds will appear here once the engine begins publishing to Supabase.
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-base">
+              <Wallet className="h-4 w-4" /> Positions summary
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="text-sm text-muted-foreground">
+            Aggregate exposure across markets.
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-base">
+              <HeartPulse className="h-4 w-4" /> Alerts
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="text-sm text-muted-foreground">
+            No critical alerts. Notification center is empty.
+          </CardContent>
+        </Card>
+      </div>
+    </>
   );
 }
