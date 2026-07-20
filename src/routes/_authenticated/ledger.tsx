@@ -42,7 +42,7 @@ function LedgerPage() {
             </div>
           )},
           { key: "side", header: "Side", render: (r) => <Badge variant="outline">{String(r.side)}</Badge> },
-          { key: "majority_side_at_trigger", header: "Majority@trigger", render: (r) => r.majority_side_at_trigger ?? "—" },
+          { key: "majority_side_at_trigger", header: "Majority@trigger", render: (r) => r.majority_side_at_trigger ? String(r.majority_side_at_trigger) : "—" },
           { key: "trigger_price", header: "Trigger", render: (r) => r.trigger_price == null ? "—" : fmtPrice(Number(r.trigger_price)) },
           { key: "target_buy_price", header: "Target", render: (r) => r.target_buy_price == null ? "—" : fmtPrice(Number(r.target_buy_price)) },
           { key: "price", header: "Fill", render: (r) => fmtPrice(Number(r.price)) },
