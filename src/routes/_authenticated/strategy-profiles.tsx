@@ -546,7 +546,7 @@ function VersionsPanel({ profileId, userId, currentVersion }: { profileId: numbe
                 title={`Restore v${v.version}?`}
                 description="This creates a new version identical to the selected one."
                 confirmLabel="Restore"
-                onConfirm={() => restore(v)}
+                onConfirm={async () => { await restore(v); }}
               />
             )}
           </div>
