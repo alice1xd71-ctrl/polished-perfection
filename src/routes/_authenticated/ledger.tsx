@@ -4,11 +4,12 @@ import { TableView } from "@/components/app/table-view";
 import { RealtimeIndicator } from "@/components/app/realtime-indicator";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ExternalLink } from "lucide-react";
+import { Download, ExternalLink } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useRealtimeList } from "@/hooks/use-realtime";
 import type { Tables } from "@/integrations/supabase/types";
 import { fmtAgo, fmtPrice, fmtUsd, fmtNum } from "@/lib/format";
+import { exportCsv, exportJson, timestampedName } from "@/lib/export";
 
 export const Route = createFileRoute("/_authenticated/ledger")({
   head: () => ({ meta: [{ title: "Ledger — P4 Bot" }, { name: "robots", content: "noindex" }] }),
@@ -30,7 +31,15 @@ function LedgerPage() {
       <PageHeader
         title="Ledger"
         description="Complete lifecycle of every trade — click a row to open its replay."
-        actions={<RealtimeIndicator status={status} />}
+        actions={
+          <div className="flex items-center gap-2">
+            <RealtimeIndicator status={status} />
+            <Button size="sm" variant="outline" onClick={() => exportCsv(timestampedName("ledger", "csv"), rows as unknown as Record<string, unknown>[])} disabled={rows.length === 0}>
+              <Download className="mr-1.5 h-4 w-4" /> CSV
+            </Button>
+            <Button size="sm" variant="ghost" onClick={() => exportJson(timestampedName("ledger", "json"), rows)} disabled={rows.length === 0}>JSON</Button>
+          </div>
+        }
       />
       <TableView
         columns={[

@@ -18,6 +18,7 @@ export type Database = {
         Row: {
           category: string
           created_at: string
+          execution_id: string | null
           id: number
           level: string
           message: string
@@ -28,6 +29,7 @@ export type Database = {
         Insert: {
           category: string
           created_at?: string
+          execution_id?: string | null
           id?: number
           level: string
           message: string
@@ -38,6 +40,7 @@ export type Database = {
         Update: {
           category?: string
           created_at?: string
+          execution_id?: string | null
           id?: number
           level?: string
           message?: string
@@ -196,6 +199,57 @@ export type Database = {
         }
         Relationships: []
       }
+      engine_events: {
+        Row: {
+          correlation_id: string | null
+          created_at: string
+          duration_ms: number | null
+          engine_instance_id: string | null
+          event_type: string
+          execution_id: string | null
+          id: number
+          instance_id: string | null
+          message: string | null
+          metadata: Json | null
+          severity: string
+          source: string
+          timestamp: string
+          user_id: string
+        }
+        Insert: {
+          correlation_id?: string | null
+          created_at?: string
+          duration_ms?: number | null
+          engine_instance_id?: string | null
+          event_type: string
+          execution_id?: string | null
+          id?: number
+          instance_id?: string | null
+          message?: string | null
+          metadata?: Json | null
+          severity?: string
+          source?: string
+          timestamp?: string
+          user_id: string
+        }
+        Update: {
+          correlation_id?: string | null
+          created_at?: string
+          duration_ms?: number | null
+          engine_instance_id?: string | null
+          event_type?: string
+          execution_id?: string | null
+          id?: number
+          instance_id?: string | null
+          message?: string | null
+          metadata?: Json | null
+          severity?: string
+          source?: string
+          timestamp?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       engine_feed_status: {
         Row: {
           detail: Json | null
@@ -256,10 +310,13 @@ export type Database = {
       engine_instances: {
         Row: {
           active_strategy: string | null
+          cpu_percent: number | null
           current_market_id: string | null
+          deployed_at: string | null
           engine_mode: string
           engine_status: string
           engine_version: string | null
+          git_commit: string | null
           heartbeat_latency_ms: number | null
           host_name: string | null
           id: string
@@ -267,18 +324,24 @@ export type Database = {
           instance_name: string | null
           last_heartbeat: string | null
           last_restart_at: string | null
+          memory_total_mb: number | null
+          memory_used_mb: number | null
           meta: Json | null
           region: string | null
           registered_at: string
+          restart_count: number
           uptime_seconds: number | null
           user_id: string
         }
         Insert: {
           active_strategy?: string | null
+          cpu_percent?: number | null
           current_market_id?: string | null
+          deployed_at?: string | null
           engine_mode?: string
           engine_status?: string
           engine_version?: string | null
+          git_commit?: string | null
           heartbeat_latency_ms?: number | null
           host_name?: string | null
           id?: string
@@ -286,18 +349,24 @@ export type Database = {
           instance_name?: string | null
           last_heartbeat?: string | null
           last_restart_at?: string | null
+          memory_total_mb?: number | null
+          memory_used_mb?: number | null
           meta?: Json | null
           region?: string | null
           registered_at?: string
+          restart_count?: number
           uptime_seconds?: number | null
           user_id: string
         }
         Update: {
           active_strategy?: string | null
+          cpu_percent?: number | null
           current_market_id?: string | null
+          deployed_at?: string | null
           engine_mode?: string
           engine_status?: string
           engine_version?: string | null
+          git_commit?: string | null
           heartbeat_latency_ms?: number | null
           host_name?: string | null
           id?: string
@@ -305,9 +374,12 @@ export type Database = {
           instance_name?: string | null
           last_heartbeat?: string | null
           last_restart_at?: string | null
+          memory_total_mb?: number | null
+          memory_used_mb?: number | null
           meta?: Json | null
           region?: string | null
           registered_at?: string
+          restart_count?: number
           uptime_seconds?: number | null
           user_id?: string
         }
@@ -402,6 +474,8 @@ export type Database = {
       }
       notifications: {
         Row: {
+          acknowledged_at: string | null
+          acknowledged_by: string | null
           body: string | null
           category: string
           created_at: string
@@ -409,6 +483,8 @@ export type Database = {
           id: number
           metadata: Json | null
           read_at: string | null
+          requires_ack: boolean
+          resolved_at: string | null
           severity: string
           source: string
           title: string
@@ -416,6 +492,8 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
           body?: string | null
           category?: string
           created_at?: string
@@ -423,6 +501,8 @@ export type Database = {
           id?: number
           metadata?: Json | null
           read_at?: string | null
+          requires_ack?: boolean
+          resolved_at?: string | null
           severity?: string
           source?: string
           title: string
@@ -430,6 +510,8 @@ export type Database = {
           user_id: string
         }
         Update: {
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
           body?: string | null
           category?: string
           created_at?: string
@@ -437,6 +519,8 @@ export type Database = {
           id?: number
           metadata?: Json | null
           read_at?: string | null
+          requires_ack?: boolean
+          resolved_at?: string | null
           severity?: string
           source?: string
           title?: string
@@ -452,6 +536,7 @@ export type Database = {
           client_order_id: string
           created_at_ms: number
           exchange_order_id: string | null
+          execution_id: string | null
           failed_at_ms: number | null
           id: number
           last_error: string | null
@@ -473,6 +558,7 @@ export type Database = {
           client_order_id: string
           created_at_ms: number
           exchange_order_id?: string | null
+          execution_id?: string | null
           failed_at_ms?: number | null
           id?: number
           last_error?: string | null
@@ -494,6 +580,7 @@ export type Database = {
           client_order_id?: string
           created_at_ms?: number
           exchange_order_id?: string | null
+          execution_id?: string | null
           failed_at_ms?: number | null
           id?: number
           last_error?: string | null
@@ -652,6 +739,7 @@ export type Database = {
           created_by: string
           engine_instance_id: string | null
           event: string
+          execution_id: string | null
           id: number
           latency_ms: number | null
           message: string | null
@@ -666,6 +754,7 @@ export type Database = {
           created_by?: string
           engine_instance_id?: string | null
           event: string
+          execution_id?: string | null
           id?: number
           latency_ms?: number | null
           message?: string | null
@@ -680,6 +769,7 @@ export type Database = {
           created_by?: string
           engine_instance_id?: string | null
           event?: string
+          execution_id?: string | null
           id?: number
           latency_ms?: number | null
           message?: string | null
@@ -705,6 +795,7 @@ export type Database = {
           created_at: string
           exchange_order_id: string | null
           execution_completed_at: string | null
+          execution_id: string | null
           execution_started_at: string | null
           execution_window_end: string | null
           execution_window_start: string | null
@@ -739,6 +830,7 @@ export type Database = {
           created_at?: string
           exchange_order_id?: string | null
           execution_completed_at?: string | null
+          execution_id?: string | null
           execution_started_at?: string | null
           execution_window_end?: string | null
           execution_window_start?: string | null
@@ -773,6 +865,7 @@ export type Database = {
           created_at?: string
           exchange_order_id?: string | null
           execution_completed_at?: string | null
+          execution_id?: string | null
           execution_started_at?: string | null
           execution_window_end?: string | null
           execution_window_start?: string | null
@@ -953,6 +1046,7 @@ export type Database = {
           engine_instance_id: string | null
           entry_at_ms: number | null
           event_id: string | null
+          execution_id: string | null
           execution_latency_ms: number | null
           explanation: Json | null
           fees: number | null
@@ -994,6 +1088,7 @@ export type Database = {
           engine_instance_id?: string | null
           entry_at_ms?: number | null
           event_id?: string | null
+          execution_id?: string | null
           execution_latency_ms?: number | null
           explanation?: Json | null
           fees?: number | null
@@ -1035,6 +1130,7 @@ export type Database = {
           engine_instance_id?: string | null
           entry_at_ms?: number | null
           event_id?: string | null
+          execution_id?: string | null
           execution_latency_ms?: number | null
           explanation?: Json | null
           fees?: number | null

@@ -13,6 +13,7 @@ import {
   Bell,
   Settings,
   ShieldCheck,
+  Activity,
   type LucideIcon,
 } from "lucide-react";
 
@@ -36,6 +37,7 @@ export const NAV_ITEMS: NavItem[] = [
   { title: "Replay", to: "/replay", icon: Rewind, section: "Analytics" },
   { title: "Strategy Profiles", to: "/strategy-profiles", icon: Layers, section: "Configuration" },
   { title: "Health Monitor", to: "/health", icon: HeartPulse, section: "System" },
+  { title: "Operations", to: "/operations", icon: Activity, section: "System" },
   { title: "Notifications", to: "/notifications", icon: Bell, section: "System" },
   { title: "Settings", to: "/settings", icon: Settings, section: "System" },
   { title: "Administration", to: "/admin", icon: ShieldCheck, section: "System", adminOnly: true },
