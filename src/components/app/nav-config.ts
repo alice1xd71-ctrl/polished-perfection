@@ -13,6 +13,7 @@ import {
   Bell,
   Settings,
   ShieldCheck,
+  Activity,
   type LucideIcon,
 } from "lucide-react";
 
