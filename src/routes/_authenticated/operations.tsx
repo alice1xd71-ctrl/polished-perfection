@@ -373,3 +373,10 @@ function fmtUptime(seconds: number): string {
   if (h > 0) return `${h}h ${m}m`;
   return `${m}m`;
 }
+
+function readErr(f: Feed): string | null {
+  const d = f.detail as Record<string, unknown> | null;
+  const v = d && typeof d === "object" ? (d["error"] ?? d["last_error"]) : null;
+  return v ? String(v) : null;
+}
+
