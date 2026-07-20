@@ -138,14 +138,22 @@ function EngineModeCard({
     setBusy(action);
     try {
       const res = await control({ data: { action, mode } });
-      if (res.ok) toast.success(`${label}: ${action} sent`);
-      else toast.error(`${label}: ${res.error}`);
+      if (res.ok) {
+        toast.success(`${label}: ${action} sent`);
+      } else if (res.code === "engine_offline") {
+        toast.warning(`${label} is offline — waiting for engine to register.`);
+      } else if (res.code === "unreachable") {
+        toast.error(`${label} unreachable: ${res.error}`);
+      } else {
+        toast.error(`${label}: ${res.error}`);
+      }
     } catch (err) {
       toast.error(`${label}: ${err instanceof Error ? err.message : String(err)}`);
     } finally {
       setBusy(null);
     }
   }
+
 
   const beat = inst?.last_heartbeat ? nowTick - new Date(inst.last_heartbeat).getTime() : null;
   const running =

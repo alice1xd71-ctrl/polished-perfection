@@ -38,6 +38,22 @@ type Handler = (
 const handlers: Record<string, Handler> = {
   // ---- Engine lifecycle ----
   async register(userId, body, admin) {
+    const mode = body.engine_mode === "live" ? "live" : body.engine_mode === "paper" ? "paper" : null;
+    if (!mode) {
+      return engineJson({ error: "invalid_engine_mode", hint: "expected 'paper' or 'live'" }, 400);
+    }
+    const controlUrlRaw = body.control_url ?? null;
+    let controlUrl: string | null = null;
+    if (controlUrlRaw != null) {
+      const s = String(controlUrlRaw);
+      try {
+        const u = new URL(s);
+        if (u.protocol !== "http:" && u.protocol !== "https:") throw new Error("bad_protocol");
+        controlUrl = u.toString().replace(/\/$/, "");
+      } catch {
+        return engineJson({ error: "invalid_control_url", value: s }, 400);
+      }
+    }
     const { data, error } = await admin
       .from("engine_instances")
       .upsert(
@@ -48,10 +64,10 @@ const handlers: Record<string, Handler> = {
           engine_version: body.engine_version ?? null,
           host_name: body.host_name ?? null,
           region: body.region ?? null,
-          engine_mode: body.engine_mode === "live" ? "live" : "paper",
-          engine_status: "online",
+          engine_mode: mode,
+          engine_status: body.engine_status ?? "online",
           active_strategy: body.active_strategy ?? null,
-          control_url: body.control_url ?? null,
+          control_url: controlUrl,
           last_restart_at: new Date().toISOString(),
           last_heartbeat: new Date().toISOString(),
           meta: body.meta ?? null,
@@ -63,6 +79,7 @@ const handlers: Record<string, Handler> = {
     if (error) return engineJson({ error: error.message }, 500);
     return engineJson({ ok: true, engine_instance: data });
   },
+
 
 
   async heartbeat(userId, body, admin) {
