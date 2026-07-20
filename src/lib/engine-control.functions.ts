@@ -58,11 +58,7 @@ export const controlEngine = createServerFn({ method: "POST" })
       });
       const text = await res.text();
       let payload: string | null = null;
-      try {
-        payload = text ? JSON.parse(text) : null;
-      } catch {
-        payload = text;
-      }
+      payload = text || null;
       if (!res.ok) {
         return {
           ok: false as const,
