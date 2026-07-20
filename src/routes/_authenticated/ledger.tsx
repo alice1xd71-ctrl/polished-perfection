@@ -62,13 +62,24 @@ function LedgerPage() {
           )},
           { key: "settlement_status", header: "Settlement", render: (r) => r.settlement_status ? <Badge variant="outline">{String(r.settlement_status)}</Badge> : "—" },
           { key: "exchange_order_id", header: "Exchange", render: (r) => r.exchange_order_id ? <span className="font-mono text-[10px]">{String(r.exchange_order_id).slice(0, 10)}</span> : "—" },
-          { key: "slug", header: "", render: (r) => r.slug ? (
-            <Button asChild size="sm" variant="ghost">
-              <a href={`https://polymarket.com/event/${String(r.slug)}`} target="_blank" rel="noreferrer">
-                <ExternalLink className="h-3.5 w-3.5" />
-              </a>
-            </Button>
-          ) : <>—</> },
+          { key: "polymarket_link", header: "", className: "text-right", render: (r) => {
+            const slug = r.slug ? String(r.slug) : null;
+            const marketId = r.market_id ? String(r.market_id) : null;
+            const href = slug
+              ? `https://polymarket.com/event/${slug}`
+              : marketId
+                ? `https://polymarket.com/market/${marketId}`
+                : null;
+            if (!href) return <span className="text-muted-foreground">—</span>;
+            return (
+              <Button asChild size="sm" variant="ghost" className="ml-auto">
+                <a href={href} target="_blank" rel="noreferrer" aria-label="View on Polymarket">
+                  View on Polymarket <ExternalLink className="ml-1.5 h-3.5 w-3.5" />
+                </a>
+              </Button>
+            );
+          }},
+
         ]}
         rows={rows as unknown as Record<string, unknown>[]}
         loading={loading}
