@@ -26,6 +26,7 @@ import { Route as AuthenticatedHealthRouteImport } from './routes/_authenticated
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAnalyticsRouteImport } from './routes/_authenticated/analytics'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as ApiPublicEngineActionRouteImport } from './routes/api/public/engine/$action'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
@@ -114,6 +115,11 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ApiPublicEngineActionRoute = ApiPublicEngineActionRouteImport.update({
+  id: '/api/public/engine/$action',
+  path: '/api/public/engine/$action',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -132,6 +138,7 @@ export interface FileRoutesByFullPath {
   '/standing-orders': typeof AuthenticatedStandingOrdersRoute
   '/strategy-profiles': typeof AuthenticatedStrategyProfilesRoute
   '/trades': typeof AuthenticatedTradesRoute
+  '/api/public/engine/$action': typeof ApiPublicEngineActionRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -150,6 +157,7 @@ export interface FileRoutesByTo {
   '/standing-orders': typeof AuthenticatedStandingOrdersRoute
   '/strategy-profiles': typeof AuthenticatedStrategyProfilesRoute
   '/trades': typeof AuthenticatedTradesRoute
+  '/api/public/engine/$action': typeof ApiPublicEngineActionRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -170,6 +178,7 @@ export interface FileRoutesById {
   '/_authenticated/standing-orders': typeof AuthenticatedStandingOrdersRoute
   '/_authenticated/strategy-profiles': typeof AuthenticatedStrategyProfilesRoute
   '/_authenticated/trades': typeof AuthenticatedTradesRoute
+  '/api/public/engine/$action': typeof ApiPublicEngineActionRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -190,6 +199,7 @@ export interface FileRouteTypes {
     | '/standing-orders'
     | '/strategy-profiles'
     | '/trades'
+    | '/api/public/engine/$action'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -208,6 +218,7 @@ export interface FileRouteTypes {
     | '/standing-orders'
     | '/strategy-profiles'
     | '/trades'
+    | '/api/public/engine/$action'
   id:
     | '__root__'
     | '/'
@@ -227,12 +238,14 @@ export interface FileRouteTypes {
     | '/_authenticated/standing-orders'
     | '/_authenticated/strategy-profiles'
     | '/_authenticated/trades'
+    | '/api/public/engine/$action'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ApiPublicEngineActionRoute: typeof ApiPublicEngineActionRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -356,6 +369,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/engine/$action': {
+      id: '/api/public/engine/$action'
+      path: '/api/public/engine/$action'
+      fullPath: '/api/public/engine/$action'
+      preLoaderRoute: typeof ApiPublicEngineActionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -400,6 +420,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  ApiPublicEngineActionRoute: ApiPublicEngineActionRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
