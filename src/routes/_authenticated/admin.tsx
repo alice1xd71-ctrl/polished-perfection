@@ -52,6 +52,6 @@ function AdminContent() {
           emptyTitle="No roles"
         />
       </div>
-    </PermissionGuard>
+    </>
   );
 }
