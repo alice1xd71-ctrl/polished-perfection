@@ -31,7 +31,15 @@ function LedgerPage() {
       <PageHeader
         title="Ledger"
         description="Complete lifecycle of every trade — click a row to open its replay."
-        actions={<RealtimeIndicator status={status} />}
+        actions={
+          <div className="flex items-center gap-2">
+            <RealtimeIndicator status={status} />
+            <Button size="sm" variant="outline" onClick={() => exportCsv(timestampedName("ledger", "csv"), rows as unknown as Record<string, unknown>[])} disabled={rows.length === 0}>
+              <Download className="mr-1.5 h-4 w-4" /> CSV
+            </Button>
+            <Button size="sm" variant="ghost" onClick={() => exportJson(timestampedName("ledger", "json"), rows)} disabled={rows.length === 0}>JSON</Button>
+          </div>
+        }
       />
       <TableView
         columns={[
