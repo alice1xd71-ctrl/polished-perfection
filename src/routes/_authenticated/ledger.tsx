@@ -4,11 +4,12 @@ import { TableView } from "@/components/app/table-view";
 import { RealtimeIndicator } from "@/components/app/realtime-indicator";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ExternalLink } from "lucide-react";
+import { Download, ExternalLink } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useRealtimeList } from "@/hooks/use-realtime";
 import type { Tables } from "@/integrations/supabase/types";
 import { fmtAgo, fmtPrice, fmtUsd, fmtNum } from "@/lib/format";
+import { exportCsv, exportJson, timestampedName } from "@/lib/export";
 
 export const Route = createFileRoute("/_authenticated/ledger")({
   head: () => ({ meta: [{ title: "Ledger — P4 Bot" }, { name: "robots", content: "noindex" }] }),
