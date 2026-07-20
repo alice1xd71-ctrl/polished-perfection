@@ -13,7 +13,7 @@ import { supabase } from "@/integrations/supabase/client";
 import type { RealtimeChannel, RealtimePostgresChangesPayload } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 
-type TableName = keyof Database["public"]["Tables"];
+type TableName = keyof Database["public"]["Tables"] | (string & {});
 
 export type RealtimeStatus = "idle" | "connecting" | "connected" | "error" | "closed";
 
