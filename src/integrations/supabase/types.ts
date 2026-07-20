@@ -47,6 +47,89 @@ export type Database = {
         }
         Relationships: []
       }
+      btc5m_contract_history: {
+        Row: {
+          archived_at: string
+          engine_instance_id: string | null
+          event_id: string | null
+          final_no_price: number | null
+          final_outcome: string | null
+          final_yes_price: number | null
+          id: number
+          liquidity: number | null
+          market_id: string
+          meta: Json | null
+          no_token_id: string | null
+          question: string | null
+          resolution_at: string | null
+          slot_end_ms: number
+          slot_start_ms: number
+          slug: string | null
+          total_standing_orders: number
+          total_trades: number
+          user_id: string
+          volume: number | null
+          winning_side: string | null
+          yes_token_id: string | null
+        }
+        Insert: {
+          archived_at?: string
+          engine_instance_id?: string | null
+          event_id?: string | null
+          final_no_price?: number | null
+          final_outcome?: string | null
+          final_yes_price?: number | null
+          id?: number
+          liquidity?: number | null
+          market_id: string
+          meta?: Json | null
+          no_token_id?: string | null
+          question?: string | null
+          resolution_at?: string | null
+          slot_end_ms: number
+          slot_start_ms: number
+          slug?: string | null
+          total_standing_orders?: number
+          total_trades?: number
+          user_id: string
+          volume?: number | null
+          winning_side?: string | null
+          yes_token_id?: string | null
+        }
+        Update: {
+          archived_at?: string
+          engine_instance_id?: string | null
+          event_id?: string | null
+          final_no_price?: number | null
+          final_outcome?: string | null
+          final_yes_price?: number | null
+          id?: number
+          liquidity?: number | null
+          market_id?: string
+          meta?: Json | null
+          no_token_id?: string | null
+          question?: string | null
+          resolution_at?: string | null
+          slot_end_ms?: number
+          slot_start_ms?: number
+          slug?: string | null
+          total_standing_orders?: number
+          total_trades?: number
+          user_id?: string
+          volume?: number | null
+          winning_side?: string | null
+          yes_token_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "btc5m_contract_history_engine_instance_id_fkey"
+            columns: ["engine_instance_id"]
+            isOneToOne: false
+            referencedRelation: "engine_instances"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       btc5m_markets: {
         Row: {
           best_ask_yes: number | null
@@ -170,6 +253,66 @@ export type Database = {
         }
         Relationships: []
       }
+      engine_instances: {
+        Row: {
+          active_strategy: string | null
+          current_market_id: string | null
+          engine_mode: string
+          engine_status: string
+          engine_version: string | null
+          heartbeat_latency_ms: number | null
+          host_name: string | null
+          id: string
+          instance_id: string
+          instance_name: string | null
+          last_heartbeat: string | null
+          last_restart_at: string | null
+          meta: Json | null
+          region: string | null
+          registered_at: string
+          uptime_seconds: number | null
+          user_id: string
+        }
+        Insert: {
+          active_strategy?: string | null
+          current_market_id?: string | null
+          engine_mode?: string
+          engine_status?: string
+          engine_version?: string | null
+          heartbeat_latency_ms?: number | null
+          host_name?: string | null
+          id?: string
+          instance_id: string
+          instance_name?: string | null
+          last_heartbeat?: string | null
+          last_restart_at?: string | null
+          meta?: Json | null
+          region?: string | null
+          registered_at?: string
+          uptime_seconds?: number | null
+          user_id: string
+        }
+        Update: {
+          active_strategy?: string | null
+          current_market_id?: string | null
+          engine_mode?: string
+          engine_status?: string
+          engine_version?: string | null
+          heartbeat_latency_ms?: number | null
+          host_name?: string | null
+          id?: string
+          instance_id?: string
+          instance_name?: string | null
+          last_heartbeat?: string | null
+          last_restart_at?: string | null
+          meta?: Json | null
+          region?: string | null
+          registered_at?: string
+          uptime_seconds?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       engine_kv: {
         Row: {
           key: string
@@ -252,6 +395,51 @@ export type Database = {
           submit_at_ms?: number
           submit_ms?: number
           total_ms?: number
+          ts_ms?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          body: string | null
+          category: string
+          created_at: string
+          expires_at: string | null
+          id: number
+          metadata: Json | null
+          read_at: string | null
+          severity: string
+          source: string
+          title: string
+          ts_ms: number
+          user_id: string
+        }
+        Insert: {
+          body?: string | null
+          category?: string
+          created_at?: string
+          expires_at?: string | null
+          id?: number
+          metadata?: Json | null
+          read_at?: string | null
+          severity?: string
+          source?: string
+          title: string
+          ts_ms?: number
+          user_id: string
+        }
+        Update: {
+          body?: string | null
+          category?: string
+          created_at?: string
+          expires_at?: string | null
+          id?: number
+          metadata?: Json | null
+          read_at?: string | null
+          severity?: string
+          source?: string
+          title?: string
           ts_ms?: number
           user_id?: string
         }
@@ -513,6 +701,7 @@ export type Database = {
       }
       standing_orders: {
         Row: {
+          active_market_id: string | null
           created_at: string
           exchange_order_id: string | null
           execution_completed_at: string | null
@@ -522,10 +711,12 @@ export type Database = {
           final_status: string | null
           id: string
           last_error: string | null
+          last_market_roll_at: string | null
           majority_side_at_trigger:
             | Database["public"]["Enums"]["trade_side"]
             | null
           market_id: string | null
+          market_roll_count: number
           max_retries: number
           mode: Database["public"]["Enums"]["pipeline_mode"]
           name: string
@@ -544,6 +735,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          active_market_id?: string | null
           created_at?: string
           exchange_order_id?: string | null
           execution_completed_at?: string | null
@@ -553,10 +745,12 @@ export type Database = {
           final_status?: string | null
           id?: string
           last_error?: string | null
+          last_market_roll_at?: string | null
           majority_side_at_trigger?:
             | Database["public"]["Enums"]["trade_side"]
             | null
           market_id?: string | null
+          market_roll_count?: number
           max_retries?: number
           mode?: Database["public"]["Enums"]["pipeline_mode"]
           name: string
@@ -575,6 +769,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          active_market_id?: string | null
           created_at?: string
           exchange_order_id?: string | null
           execution_completed_at?: string | null
@@ -584,10 +779,12 @@ export type Database = {
           final_status?: string | null
           id?: string
           last_error?: string | null
+          last_market_roll_at?: string | null
           majority_side_at_trigger?:
             | Database["public"]["Enums"]["trade_side"]
             | null
           market_id?: string | null
+          market_roll_count?: number
           max_retries?: number
           mode?: Database["public"]["Enums"]["pipeline_mode"]
           name?: string
@@ -747,77 +944,136 @@ export type Database = {
       trades: {
         Row: {
           balance_after: number
+          contract_end_ms: number | null
+          contract_start_ms: number | null
           cost: number
           created_at: string
+          down_token_id: string | null
           dust_saved: number
+          engine_instance_id: string | null
           entry_at_ms: number | null
+          event_id: string | null
+          execution_latency_ms: number | null
           explanation: Json | null
+          fees: number | null
           id: number
+          majority_side_at_trigger: string | null
           mark_price: number | null
           market_id: string
+          market_snapshot: Json | null
           mode: Database["public"]["Enums"]["pipeline_mode"]
           order_id: string | null
           pnl: number
           price: number
+          question: string | null
+          reconciliation_status: string | null
+          resolution_at: string | null
           result: Database["public"]["Enums"]["trade_result"]
           settled_at: string | null
+          settlement_status: string | null
           shares: number
           side: Database["public"]["Enums"]["trade_side"]
           slot_end_ms: number
+          slug: string | null
           status: Database["public"]["Enums"]["trade_status"]
+          target_buy_price: number | null
           trade_uid: string | null
+          trigger_price: number | null
           unrealized_pnl: number | null
+          up_token_id: string | null
           user_id: string
         }
         Insert: {
           balance_after?: number
+          contract_end_ms?: number | null
+          contract_start_ms?: number | null
           cost: number
           created_at?: string
+          down_token_id?: string | null
           dust_saved?: number
+          engine_instance_id?: string | null
           entry_at_ms?: number | null
+          event_id?: string | null
+          execution_latency_ms?: number | null
           explanation?: Json | null
+          fees?: number | null
           id?: number
+          majority_side_at_trigger?: string | null
           mark_price?: number | null
           market_id: string
+          market_snapshot?: Json | null
           mode: Database["public"]["Enums"]["pipeline_mode"]
           order_id?: string | null
           pnl?: number
           price: number
+          question?: string | null
+          reconciliation_status?: string | null
+          resolution_at?: string | null
           result?: Database["public"]["Enums"]["trade_result"]
           settled_at?: string | null
+          settlement_status?: string | null
           shares: number
           side: Database["public"]["Enums"]["trade_side"]
           slot_end_ms: number
+          slug?: string | null
           status?: Database["public"]["Enums"]["trade_status"]
+          target_buy_price?: number | null
           trade_uid?: string | null
+          trigger_price?: number | null
           unrealized_pnl?: number | null
+          up_token_id?: string | null
           user_id: string
         }
         Update: {
           balance_after?: number
+          contract_end_ms?: number | null
+          contract_start_ms?: number | null
           cost?: number
           created_at?: string
+          down_token_id?: string | null
           dust_saved?: number
+          engine_instance_id?: string | null
           entry_at_ms?: number | null
+          event_id?: string | null
+          execution_latency_ms?: number | null
           explanation?: Json | null
+          fees?: number | null
           id?: number
+          majority_side_at_trigger?: string | null
           mark_price?: number | null
           market_id?: string
+          market_snapshot?: Json | null
           mode?: Database["public"]["Enums"]["pipeline_mode"]
           order_id?: string | null
           pnl?: number
           price?: number
+          question?: string | null
+          reconciliation_status?: string | null
+          resolution_at?: string | null
           result?: Database["public"]["Enums"]["trade_result"]
           settled_at?: string | null
+          settlement_status?: string | null
           shares?: number
           side?: Database["public"]["Enums"]["trade_side"]
           slot_end_ms?: number
+          slug?: string | null
           status?: Database["public"]["Enums"]["trade_status"]
+          target_buy_price?: number | null
           trade_uid?: string | null
+          trigger_price?: number | null
           unrealized_pnl?: number | null
+          up_token_id?: string | null
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "trades_engine_instance_id_fkey"
+            columns: ["engine_instance_id"]
+            isOneToOne: false
+            referencedRelation: "engine_instances"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
