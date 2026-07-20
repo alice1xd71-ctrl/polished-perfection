@@ -26,6 +26,7 @@ export type NavItem = {
 
 export const NAV_ITEMS: NavItem[] = [
   { title: "Dashboard", to: "/dashboard", icon: LayoutDashboard, section: "Trading" },
+  { title: "Standing Limit Order", to: "/standing-orders", icon: Settings2, section: "Trading" },
   { title: "Markets", to: "/markets", icon: LineChart, section: "Trading" },
   { title: "Orders", to: "/orders", icon: ListOrdered, section: "Trading" },
   { title: "Positions", to: "/positions", icon: Wallet, section: "Trading" },
@@ -34,7 +35,6 @@ export const NAV_ITEMS: NavItem[] = [
   { title: "Analytics", to: "/analytics", icon: BarChart3, section: "Analytics" },
   { title: "Replay", to: "/replay", icon: Rewind, section: "Analytics" },
   { title: "Strategy Profiles", to: "/strategy-profiles", icon: Layers, section: "Configuration" },
-  { title: "Standing Orders", to: "/standing-orders", icon: Settings2, section: "Configuration" },
   { title: "Health Monitor", to: "/health", icon: HeartPulse, section: "System" },
   { title: "Notifications", to: "/notifications", icon: Bell, section: "System" },
   { title: "Settings", to: "/settings", icon: Settings, section: "System" },
