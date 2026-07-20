@@ -57,7 +57,7 @@ export const controlEngine = createServerFn({ method: "POST" })
         body: JSON.stringify({ mode: data.mode, user_id: context.userId }),
       });
       const text = await res.text();
-      let payload: unknown = null;
+      let payload: string | null = null;
       try {
         payload = text ? JSON.parse(text) : null;
       } catch {
