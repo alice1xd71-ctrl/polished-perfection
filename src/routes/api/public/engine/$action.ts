@@ -66,7 +66,6 @@ const handlers: Record<string, Handler> = {
   async heartbeat(userId, body, admin) {
     const now = new Date().toISOString();
     const instanceId = String(body.instance_id ?? "default");
-    // Update engine_instances
     await admin
       .from("engine_instances")
       .update({
@@ -75,11 +74,13 @@ const handlers: Record<string, Handler> = {
         active_strategy: body.active_strategy ?? null,
         uptime_seconds: body.uptime_seconds ?? null,
         heartbeat_latency_ms: body.heartbeat_latency_ms ?? null,
+        memory_used_mb: body.memory_used_mb ?? null,
+        memory_total_mb: body.memory_total_mb ?? null,
+        cpu_percent: body.cpu_percent ?? null,
         last_heartbeat: now,
       })
       .eq("user_id", userId)
       .eq("instance_id", instanceId);
-    // Legacy heartbeat table (dashboard already reads this)
     await admin
       .from("engine_heartbeats")
       .upsert(
@@ -92,6 +93,23 @@ const handlers: Record<string, Handler> = {
         { onConflict: "user_id" },
       );
     return engineJson({ ok: true, ts: now });
+  },
+
+  async event(userId, body, admin) {
+    const { error } = await admin.from("engine_events").insert({
+      user_id: userId,
+      instance_id: body.instance_id ?? null,
+      event_type: String(body.event_type ?? "unknown"),
+      severity: body.severity ?? "info",
+      source: body.source ?? "engine",
+      message: body.message ?? null,
+      metadata: body.metadata ?? null,
+      correlation_id: body.correlation_id ?? null,
+      execution_id: body.execution_id ?? null,
+      duration_ms: body.duration_ms ?? null,
+    });
+    if (error) return engineJson({ error: error.message }, 500);
+    return engineJson({ ok: true });
   },
 
   async feed_status(userId, body, admin) {
