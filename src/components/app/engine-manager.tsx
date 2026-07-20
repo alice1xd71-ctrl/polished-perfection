@@ -195,11 +195,15 @@ function EngineModeCard({
 
       {!inst ? (
         <p className="mt-3 text-xs text-muted-foreground">
-          No engine has registered for {mode.toUpperCase()} yet. Start the engine with
-          <code className="mx-1 rounded bg-muted px-1">ENGINE_MODE={mode}</code> and confirm it
-          posts to <code className="rounded bg-muted px-1">/api/public/engine/register</code>.
+          No engine has registered for {mode.toUpperCase()} yet. Start P1 with
+          <code className="mx-1 rounded bg-muted px-1">ENGINE_MODE={mode}</code>
+          and <code className="rounded bg-muted px-1">ENGINE_USER_ID</code> set to your Lovable user id;
+          it will POST <code className="mx-1 rounded bg-muted px-1">/api/public/engine/register</code>
+          (including its own <code className="rounded bg-muted px-1">control_url</code>) and this card
+          will populate automatically.
         </p>
       ) : (
+
         <dl className="mt-3 grid grid-cols-2 gap-x-3 gap-y-1 text-xs">
           <Field label="Status" value={inst.engine_status ?? "—"} />
           <Field label="Heartbeat" value={inst.last_heartbeat ? fmtAgo(inst.last_heartbeat) : "—"} />
