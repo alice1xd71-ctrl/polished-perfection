@@ -71,7 +71,7 @@ export function useRealtimeList<Row extends Record<string, unknown>, PK extends 
     const orderCol = orderRef.current?.column ?? pkRef.current;
     const ascending = orderRef.current?.ascending ?? false;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let q: any = (supabase.from(table) as any).select(selectRef.current);
+    let q: any = ((supabase as any).from(table)).select(selectRef.current);
     if (ownerColumn && userId) q = q.eq(ownerColumn, userId);
     q = q.order(orderCol, { ascending }).limit(limitRef.current);
     const { data, error } = await q;
@@ -171,7 +171,7 @@ export function useRealtimeRow<Row extends Record<string, unknown>>(
       setLoading(true);
       setError(null);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      let q: any = (supabase.from(table) as any).select("*").eq("user_id", userId);
+      let q: any = ((supabase as any).from(table)).select("*").eq("user_id", userId);
       if (extraCol && extraVal !== null) q = q.eq(extraCol, extraVal);
       const { data, error } = await q.maybeSingle();
       if (cancelled) return;
