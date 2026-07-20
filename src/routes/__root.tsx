@@ -111,10 +111,32 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const router = useRouter();
+
+  useEffect(() => {
+    // Session-change listener: refresh route context and invalidate caches
+    // when the user signs in / out / is updated. Filtering avoids the
+    // hourly TOKEN_REFRESHED and per-mount INITIAL_SESSION churn.
+    let mounted = true;
+    import("@/integrations/supabase/client").then(({ supabase }) => {
+      if (!mounted) return;
+      const { data: sub } = supabase.auth.onAuthStateChange((event) => {
+        if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
+        router.invalidate();
+        if (event !== "SIGNED_OUT") queryClient.invalidateQueries();
+      });
+      // stash for cleanup
+      (window as unknown as { __authSub?: { unsubscribe: () => void } }).__authSub = sub.subscription;
+    });
+    return () => {
+      mounted = false;
+      const sub = (window as unknown as { __authSub?: { unsubscribe: () => void } }).__authSub;
+      sub?.unsubscribe();
+    };
+  }, [router, queryClient]);
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
     </QueryClientProvider>
   );
