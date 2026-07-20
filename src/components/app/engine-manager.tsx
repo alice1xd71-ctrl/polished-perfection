@@ -66,8 +66,9 @@ export function EngineManager({
     dayStart.setUTCHours(0, 0, 0, 0);
     const dayMs = dayStart.getTime();
     for (const t of trades) {
-      const m = (t.mode ?? "paper").toLowerCase() as Mode;
-      if (m !== "paper" && m !== "live") continue;
+      const raw = String(t.mode ?? "").toUpperCase();
+      const m: Mode | null = raw.startsWith("LIVE") ? "live" : raw.startsWith("PAPER") ? "paper" : null;
+      if (!m) continue;
       const p = Number(t.pnl ?? 0);
       acc[m].total += p;
       if (new Date(t.created_at).getTime() >= dayMs) acc[m].daily += p;
