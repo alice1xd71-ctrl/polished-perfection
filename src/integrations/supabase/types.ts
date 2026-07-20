@@ -622,42 +622,125 @@ export type Database = {
           },
         ]
       }
+      strategy_profile_versions: {
+        Row: {
+          change_summary: string
+          config: Json
+          created_at: string
+          default_mode: string
+          description: string
+          enabled: boolean
+          id: number
+          name: string
+          notes: string
+          profile_id: number
+          strategy_type: string
+          tags: string[]
+          user_id: string
+          version: number
+        }
+        Insert: {
+          change_summary?: string
+          config: Json
+          created_at?: string
+          default_mode: string
+          description?: string
+          enabled: boolean
+          id?: number
+          name: string
+          notes?: string
+          profile_id: number
+          strategy_type: string
+          tags?: string[]
+          user_id: string
+          version: number
+        }
+        Update: {
+          change_summary?: string
+          config?: Json
+          created_at?: string
+          default_mode?: string
+          description?: string
+          enabled?: boolean
+          id?: number
+          name?: string
+          notes?: string
+          profile_id?: number
+          strategy_type?: string
+          tags?: string[]
+          user_id?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "strategy_profile_versions_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "strategy_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       strategy_profiles: {
         Row: {
           config: Json
           created_at: string
           created_at_ms: number
+          default_mode: string
+          description: string
+          enabled: boolean
           id: number
+          is_active: boolean
           last_used_at_ms: number | null
           name: string
           notes: string
+          status: string
+          strategy_type: string
+          tags: string[]
           updated_at: string
           updated_at_ms: number
           user_id: string
+          version: number
         }
         Insert: {
           config: Json
           created_at?: string
           created_at_ms: number
+          default_mode?: string
+          description?: string
+          enabled?: boolean
           id?: number
+          is_active?: boolean
           last_used_at_ms?: number | null
           name: string
           notes?: string
+          status?: string
+          strategy_type?: string
+          tags?: string[]
           updated_at?: string
           updated_at_ms: number
           user_id: string
+          version?: number
         }
         Update: {
           config?: Json
           created_at?: string
           created_at_ms?: number
+          default_mode?: string
+          description?: string
+          enabled?: boolean
           id?: number
+          is_active?: boolean
           last_used_at_ms?: number | null
           name?: string
           notes?: string
+          status?: string
+          strategy_type?: string
+          tags?: string[]
           updated_at?: string
           updated_at_ms?: number
           user_id?: string
+          version?: number
         }
         Relationships: []
       }
