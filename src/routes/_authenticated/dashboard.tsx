@@ -18,6 +18,7 @@ import {
   computePnl,
 } from "@/lib/format";
 import { Activity, HeartPulse, Radio, Wallet, Target, Zap } from "lucide-react";
+import { EngineManager } from "@/components/app/engine-manager";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
