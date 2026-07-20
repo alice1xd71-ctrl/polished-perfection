@@ -1,0 +1,1 @@
+ALTER TABLE public.engine_instances ADD COLUMN IF NOT EXISTS control_url TEXT;

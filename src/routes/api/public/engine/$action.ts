@@ -51,6 +51,7 @@ const handlers: Record<string, Handler> = {
           engine_mode: body.engine_mode === "live" ? "live" : "paper",
           engine_status: "online",
           active_strategy: body.active_strategy ?? null,
+          control_url: body.control_url ?? null,
           last_restart_at: new Date().toISOString(),
           last_heartbeat: new Date().toISOString(),
           meta: body.meta ?? null,
@@ -62,6 +63,7 @@ const handlers: Record<string, Handler> = {
     if (error) return engineJson({ error: error.message }, 500);
     return engineJson({ ok: true, engine_instance: data });
   },
+
 
   async heartbeat(userId, body, admin) {
     const now = new Date().toISOString();
