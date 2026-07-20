@@ -458,6 +458,170 @@ export type Database = {
         }
         Relationships: []
       }
+      standing_order_events: {
+        Row: {
+          created_at: string
+          created_by: string
+          engine_instance_id: string | null
+          event: string
+          id: number
+          latency_ms: number | null
+          message: string | null
+          metadata: Json | null
+          phase: string
+          standing_order_id: string
+          timestamp: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string
+          engine_instance_id?: string | null
+          event: string
+          id?: number
+          latency_ms?: number | null
+          message?: string | null
+          metadata?: Json | null
+          phase: string
+          standing_order_id: string
+          timestamp?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          engine_instance_id?: string | null
+          event?: string
+          id?: number
+          latency_ms?: number | null
+          message?: string | null
+          metadata?: Json | null
+          phase?: string
+          standing_order_id?: string
+          timestamp?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "standing_order_events_standing_order_id_fkey"
+            columns: ["standing_order_id"]
+            isOneToOne: false
+            referencedRelation: "standing_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      standing_orders: {
+        Row: {
+          created_at: string
+          exchange_order_id: string | null
+          execution_completed_at: string | null
+          execution_started_at: string | null
+          execution_window_end: string | null
+          execution_window_start: string | null
+          final_status: string | null
+          id: string
+          last_error: string | null
+          majority_side_at_trigger:
+            | Database["public"]["Enums"]["trade_side"]
+            | null
+          market_id: string | null
+          max_retries: number
+          mode: Database["public"]["Enums"]["pipeline_mode"]
+          name: string
+          notes: string | null
+          order_intent_id: number | null
+          position_size: number
+          retry_count: number
+          risk_profile: string
+          selected_side: Database["public"]["Enums"]["trade_side"] | null
+          status: string
+          strategy_profile_id: number | null
+          target_buy_price: number
+          trigger_detected_at: string | null
+          trigger_price: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          exchange_order_id?: string | null
+          execution_completed_at?: string | null
+          execution_started_at?: string | null
+          execution_window_end?: string | null
+          execution_window_start?: string | null
+          final_status?: string | null
+          id?: string
+          last_error?: string | null
+          majority_side_at_trigger?:
+            | Database["public"]["Enums"]["trade_side"]
+            | null
+          market_id?: string | null
+          max_retries?: number
+          mode?: Database["public"]["Enums"]["pipeline_mode"]
+          name: string
+          notes?: string | null
+          order_intent_id?: number | null
+          position_size: number
+          retry_count?: number
+          risk_profile?: string
+          selected_side?: Database["public"]["Enums"]["trade_side"] | null
+          status?: string
+          strategy_profile_id?: number | null
+          target_buy_price: number
+          trigger_detected_at?: string | null
+          trigger_price: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          exchange_order_id?: string | null
+          execution_completed_at?: string | null
+          execution_started_at?: string | null
+          execution_window_end?: string | null
+          execution_window_start?: string | null
+          final_status?: string | null
+          id?: string
+          last_error?: string | null
+          majority_side_at_trigger?:
+            | Database["public"]["Enums"]["trade_side"]
+            | null
+          market_id?: string | null
+          max_retries?: number
+          mode?: Database["public"]["Enums"]["pipeline_mode"]
+          name?: string
+          notes?: string | null
+          order_intent_id?: number | null
+          position_size?: number
+          retry_count?: number
+          risk_profile?: string
+          selected_side?: Database["public"]["Enums"]["trade_side"] | null
+          status?: string
+          strategy_profile_id?: number | null
+          target_buy_price?: number
+          trigger_detected_at?: string | null
+          trigger_price?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "standing_orders_order_intent_id_fkey"
+            columns: ["order_intent_id"]
+            isOneToOne: false
+            referencedRelation: "order_intents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "standing_orders_strategy_profile_id_fkey"
+            columns: ["strategy_profile_id"]
+            isOneToOne: false
+            referencedRelation: "strategy_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       strategy_profiles: {
         Row: {
           config: Json
