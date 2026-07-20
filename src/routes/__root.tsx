@@ -77,20 +77,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "P4 Bot — Polymarket Trading Console" },
+      { name: "description", content: "Operator dashboard for the P4 Polymarket trading bot: strategies, standing orders, ledger, analytics, and health." },
+      { property: "og:title", content: "P4 Bot — Polymarket Trading Console" },
+      { property: "og:description", content: "Operator dashboard for the P4 Polymarket trading bot." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
+      { rel: "stylesheet", href: appCss },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
     ],
   }),
@@ -116,10 +111,32 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const router = useRouter();
+
+  useEffect(() => {
+    // Session-change listener: refresh route context and invalidate caches
+    // when the user signs in / out / is updated. Filtering avoids the
+    // hourly TOKEN_REFRESHED and per-mount INITIAL_SESSION churn.
+    let mounted = true;
+    import("@/integrations/supabase/client").then(({ supabase }) => {
+      if (!mounted) return;
+      const { data: sub } = supabase.auth.onAuthStateChange((event) => {
+        if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
+        router.invalidate();
+        if (event !== "SIGNED_OUT") queryClient.invalidateQueries();
+      });
+      // stash for cleanup
+      (window as unknown as { __authSub?: { unsubscribe: () => void } }).__authSub = sub.subscription;
+    });
+    return () => {
+      mounted = false;
+      const sub = (window as unknown as { __authSub?: { unsubscribe: () => void } }).__authSub;
+      sub?.unsubscribe();
+    };
+  }, [router, queryClient]);
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
     </QueryClientProvider>
   );
