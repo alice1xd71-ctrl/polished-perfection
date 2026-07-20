@@ -31,7 +31,7 @@ function PositionsPage() {
     const map = new Map<string, { shares: number; cost: number }>();
     for (const t of data ?? []) {
       const cur = map.get(t.market_id) ?? { shares: 0, cost: 0 };
-      const dir = t.side === "SELL" ? -1 : 1;
+      const dir = t.side === "NO" ? -1 : 1;
       cur.shares += dir * Number(t.shares ?? 0);
       cur.cost += dir * Number(t.shares ?? 0) * Number(t.price ?? 0);
       map.set(t.market_id, cur);
