@@ -310,6 +310,7 @@ export type Database = {
       engine_instances: {
         Row: {
           active_strategy: string | null
+          control_url: string | null
           cpu_percent: number | null
           current_market_id: string | null
           deployed_at: string | null
@@ -335,6 +336,7 @@ export type Database = {
         }
         Insert: {
           active_strategy?: string | null
+          control_url?: string | null
           cpu_percent?: number | null
           current_market_id?: string | null
           deployed_at?: string | null
@@ -360,6 +362,7 @@ export type Database = {
         }
         Update: {
           active_strategy?: string | null
+          control_url?: string | null
           cpu_percent?: number | null
           current_market_id?: string | null
           deployed_at?: string | null
