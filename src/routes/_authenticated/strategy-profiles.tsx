@@ -106,7 +106,7 @@ async function logAudit(userId: string, message: string, meta: Record<string, un
     level: "info",
     category: "strategy_profile",
     message,
-    meta,
+    meta: meta as never,
   });
 }
 
