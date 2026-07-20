@@ -198,7 +198,7 @@ function StandingOrdersPage() {
         description="Primary production strategy — BTC 5-minute markets. Direction is decided at trigger time from live majority side."
         actions={
           <div className="flex items-center gap-2">
-            <RealtimeIndicator status={so.status} label="orders" />
+            <RealtimeIndicator status={so.status} />
             <NewStandingOrderDialog userId={uid} markets={markets.rows} />
           </div>
         }
@@ -629,7 +629,7 @@ function OrderDetail({
       <Card className="flex-1">
         <CardHeader className="flex flex-row items-center justify-between pb-3">
           <CardTitle className="text-sm">Execution timeline</CardTitle>
-          <RealtimeIndicator status={events.status} label="events" />
+          <RealtimeIndicator status={events.status} />
         </CardHeader>
         <CardContent className="p-0">
           {events.error && (
