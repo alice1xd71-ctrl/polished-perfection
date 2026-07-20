@@ -62,7 +62,7 @@ export const controlEngine = createServerFn({ method: "POST" })
       if (!res.ok) {
         return {
           ok: false as const,
-          error: `Engine responded ${res.status}: ${typeof payload === "string" ? payload : JSON.stringify(payload)}`,
+          error: `Engine responded ${res.status}: ${payload ?? ""}`,
         };
       }
       return { ok: true as const, action: data.action, mode: data.mode, payload };
