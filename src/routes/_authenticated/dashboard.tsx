@@ -442,7 +442,11 @@ function wsState(feeds: Feed[]): "ok" | "bad" | "idle" | "warn" {
 
 function SystemPill({ label, state, hint }: { label: string; state: "ok" | "bad" | "warn" | "idle"; hint?: string }) {
   const dot = state === "ok" ? "bg-emerald-500" : state === "warn" ? "bg-yellow-500" : state === "bad" ? "bg-red-500" : "bg-muted-foreground/50";
-  const text = state === "ok" ? "healthy" : state === "warn" ? "degraded" : state === "bad" ? "down" : "idle";
+  const text =
+    state === "ok" ? "connected" :
+    state === "warn" ? "degraded" :
+    state === "bad" ? "heartbeat lost" :
+    "waiting for engine";
   return (
     <div className="flex items-center justify-between rounded-md border bg-card px-3 py-2">
       <div>
@@ -456,6 +460,7 @@ function SystemPill({ label, state, hint }: { label: string; state: "ok" | "bad"
     </div>
   );
 }
+
 
 function Metric({ label, value, tone }: { label: string; value: React.ReactNode; tone?: "emerald" | "red" }) {
   return (
