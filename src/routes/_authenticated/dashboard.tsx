@@ -18,6 +18,7 @@ import {
   computePnl,
 } from "@/lib/format";
 import { Activity, HeartPulse, Radio, Wallet, Target, Zap } from "lucide-react";
+import { EngineManager } from "@/components/app/engine-manager";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
@@ -183,6 +184,17 @@ function DashboardPage() {
           value={<span className={pnl.total >= 0 ? "text-emerald-500" : "text-red-500"}>{fmtUsd(pnl.total)}</span>}
           hint={`${fmtNum(trades.rows.length)} trades`} />
       </div>
+
+      {/* ============ ENGINE MANAGER (PAPER_V1 + LIVE_V2) ============ */}
+      <EngineManager
+        instances={instances.rows}
+        nowTick={nowTick}
+        wallet={wallet.row}
+        orders={orders.rows}
+        trades={trades.rows}
+      />
+
+
 
       {/* ============ ACTIVE CONTRACT ============ */}
       <div className="mt-4 grid gap-4 lg:grid-cols-3">
