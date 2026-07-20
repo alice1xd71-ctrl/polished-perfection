@@ -15,7 +15,8 @@ export function useSupabaseList<T = unknown>(
   const fetch = useCallback(async () => {
     setLoading(true);
     setError(null);
-    let q = supabase.from(table).select(opts?.select ?? "*");
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let q: any = supabase.from(table).select(opts?.select ?? "*");
     if (opts?.orderBy) q = q.order(opts.orderBy.column, { ascending: opts.orderBy.ascending ?? false });
     if (opts?.limit) q = q.limit(opts.limit);
     const { data, error } = await q;
