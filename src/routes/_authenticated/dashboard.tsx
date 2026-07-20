@@ -401,6 +401,12 @@ function readMeta(m: Btc5m | null, key: string): string | null {
   const v = (m.meta as Record<string, unknown>)[key];
   return v === undefined || v === null ? null : String(v);
 }
+function readMetaNum(m: Btc5m | null, key: string): number | null {
+  const raw = readMeta(m, key);
+  if (raw === null) return null;
+  const n = Number(raw);
+  return Number.isFinite(n) ? n : null;
+}
 
 function feedState(feeds: Feed[]): "ok" | "bad" | "idle" | "warn" {
   if (feeds.length === 0) return "idle";
