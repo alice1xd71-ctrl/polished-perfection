@@ -47,6 +47,102 @@ export type Database = {
         }
         Relationships: []
       }
+      btc5m_markets: {
+        Row: {
+          best_ask_yes: number | null
+          best_bid_yes: number | null
+          created_at: string
+          eligible: boolean
+          id: number
+          ineligible_reason: string | null
+          last_price_yes: number | null
+          last_tick_at: string | null
+          market_id: string
+          meta: Json | null
+          no_token_id: string | null
+          question: string | null
+          slot_end_ms: number
+          slot_start_ms: number
+          slug: string | null
+          status: string
+          updated_at: string
+          user_id: string
+          yes_token_id: string | null
+        }
+        Insert: {
+          best_ask_yes?: number | null
+          best_bid_yes?: number | null
+          created_at?: string
+          eligible?: boolean
+          id?: number
+          ineligible_reason?: string | null
+          last_price_yes?: number | null
+          last_tick_at?: string | null
+          market_id: string
+          meta?: Json | null
+          no_token_id?: string | null
+          question?: string | null
+          slot_end_ms: number
+          slot_start_ms: number
+          slug?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+          yes_token_id?: string | null
+        }
+        Update: {
+          best_ask_yes?: number | null
+          best_bid_yes?: number | null
+          created_at?: string
+          eligible?: boolean
+          id?: number
+          ineligible_reason?: string | null
+          last_price_yes?: number | null
+          last_tick_at?: string | null
+          market_id?: string
+          meta?: Json | null
+          no_token_id?: string | null
+          question?: string | null
+          slot_end_ms?: number
+          slot_start_ms?: number
+          slug?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+          yes_token_id?: string | null
+        }
+        Relationships: []
+      }
+      engine_feed_status: {
+        Row: {
+          detail: Json | null
+          feed: string
+          last_message_at: string | null
+          latency_ms: number | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          detail?: Json | null
+          feed: string
+          last_message_at?: string | null
+          latency_ms?: number | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          detail?: Json | null
+          feed?: string
+          last_message_at?: string | null
+          latency_ms?: number | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       engine_heartbeats: {
         Row: {
           last_seen_at: string
@@ -493,6 +589,33 @@ export type Database = {
           created_at?: string
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      wallet_state: {
+        Row: {
+          available_usdc: number
+          balance_usdc: number
+          locked_usdc: number
+          source: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          available_usdc?: number
+          balance_usdc?: number
+          locked_usdc?: number
+          source?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          available_usdc?: number
+          balance_usdc?: number
+          locked_usdc?: number
+          source?: string
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
