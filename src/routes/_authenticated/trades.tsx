@@ -20,12 +20,13 @@ function TradesPage() {
       <PageHeader title="Trades" description="Every executed trade, paper or live." />
       <TableView
         columns={[
-          { key: "symbol", header: "Symbol" },
+          { key: "market_id", header: "Market" },
           { key: "side", header: "Side", render: (r) => <Badge variant="outline">{String(r.side ?? "—")}</Badge> },
-          { key: "size", header: "Size" },
+          { key: "shares", header: "Shares" },
           { key: "price", header: "Price" },
           { key: "mode", header: "Mode" },
           { key: "status", header: "Status" },
+          { key: "pnl", header: "PnL" },
           { key: "created_at", header: "When" },
         ]}
         rows={data}

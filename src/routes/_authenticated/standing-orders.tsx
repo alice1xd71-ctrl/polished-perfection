@@ -12,9 +12,9 @@ export const Route = createFileRoute("/_authenticated/standing-orders")({
 function StandingOrdersPage() {
   const { data, loading, error, refetch } = useSupabaseList<Record<string, unknown>>(
     "order_intents",
-    { limit: 200, orderBy: { column: "created_at" } },
+    { limit: 200, orderBy: { column: "created_at_ms" } },
   );
-  const standing = data.filter((r) => r.status === "OPEN" || r.status === "PENDING");
+  const standing = data.filter((r) => r.status === "OPEN" || r.status === "PENDING" || r.status === "RESTING");
 
   return (
     <>
@@ -24,12 +24,12 @@ function StandingOrdersPage() {
       />
       <TableView
         columns={[
-          { key: "symbol", header: "Symbol" },
+          { key: "market_id", header: "Market" },
           { key: "side", header: "Side", render: (r) => <Badge variant="outline">{String(r.side ?? "—")}</Badge> },
-          { key: "size", header: "Size" },
+          { key: "shares", header: "Shares" },
           { key: "price", header: "Limit" },
           { key: "status", header: "Status" },
-          { key: "created_at", header: "Created" },
+          { key: "created_at_ms", header: "Created (ms)" },
         ]}
         rows={standing}
         loading={loading}

@@ -12,7 +12,7 @@ export const Route = createFileRoute("/_authenticated/orders")({
 function OrdersPage() {
   const { data, loading, error, refetch } = useSupabaseList<Record<string, unknown>>(
     "order_intents",
-    { limit: 200, orderBy: { column: "created_at" } },
+    { limit: 200, orderBy: { column: "created_at_ms" } },
   );
 
   return (
@@ -20,12 +20,12 @@ function OrdersPage() {
       <PageHeader title="Orders" description="Order intents queued for execution." />
       <TableView
         columns={[
-          { key: "symbol", header: "Symbol" },
+          { key: "market_id", header: "Market" },
           { key: "side", header: "Side", render: (r) => <Badge variant="outline">{String(r.side ?? "—")}</Badge> },
-          { key: "size", header: "Size" },
+          { key: "shares", header: "Shares" },
           { key: "price", header: "Price" },
           { key: "status", header: "Status" },
-          { key: "created_at", header: "Created" },
+          { key: "mode", header: "Mode" },
         ]}
         rows={data}
         loading={loading}

@@ -21,9 +21,10 @@ function LedgerPage() {
         columns={[
           { key: "created_at", header: "Time" },
           { key: "event", header: "Event" },
-          { key: "symbol", header: "Symbol" },
+          { key: "phase", header: "Phase" },
+          { key: "market_id", header: "Market" },
           { key: "side", header: "Side" },
-          { key: "size", header: "Size" },
+          { key: "shares", header: "Shares" },
           { key: "price", header: "Price" },
         ]}
         rows={data}

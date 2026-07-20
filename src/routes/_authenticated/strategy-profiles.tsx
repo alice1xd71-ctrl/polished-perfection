@@ -26,8 +26,8 @@ function ProfilesPage() {
       <TableView
         columns={[
           { key: "name", header: "Name" },
-          { key: "description", header: "Description" },
-          { key: "active", header: "Active" },
+          { key: "notes", header: "Notes" },
+          { key: "last_used_at_ms", header: "Last used (ms)" },
           { key: "updated_at", header: "Updated" },
         ]}
         rows={data}

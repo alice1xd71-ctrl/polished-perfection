@@ -9,7 +9,7 @@ export const Route = createFileRoute("/_authenticated/positions")({
   component: PositionsPage,
 });
 
-type Position = { market_id: string | null; symbol: string | null; net_size: number; avg_price: number };
+type Position = { market_id: string; net_shares: number; avg_price: number };
 
 function PositionsPage() {
   const [rows, setRows] = useState<Position[]>([]);
@@ -21,28 +21,26 @@ function PositionsPage() {
     setError(null);
     const { data, error } = await supabase
       .from("trades")
-      .select("market_id,symbol,side,size,price")
-      .eq("status", "FILLED");
+      .select("market_id,side,shares,price")
+      .eq("status", "OPEN");
     if (error) {
       setError(error.message);
       setLoading(false);
       return;
     }
-    const map = new Map<string, { size: number; cost: number; symbol: string | null }>();
+    const map = new Map<string, { shares: number; cost: number }>();
     for (const t of data ?? []) {
-      const k = t.market_id ?? t.symbol ?? "unknown";
-      const cur = map.get(k) ?? { size: 0, cost: 0, symbol: t.symbol };
+      const cur = map.get(t.market_id) ?? { shares: 0, cost: 0 };
       const dir = t.side === "SELL" ? -1 : 1;
-      cur.size += dir * Number(t.size ?? 0);
-      cur.cost += dir * Number(t.size ?? 0) * Number(t.price ?? 0);
-      map.set(k, cur);
+      cur.shares += dir * Number(t.shares ?? 0);
+      cur.cost += dir * Number(t.shares ?? 0) * Number(t.price ?? 0);
+      map.set(t.market_id, cur);
     }
     setRows(
-      Array.from(map.entries()).map(([id, v]) => ({
-        market_id: id,
-        symbol: v.symbol,
-        net_size: v.size,
-        avg_price: v.size !== 0 ? v.cost / v.size : 0,
+      Array.from(map.entries()).map(([market_id, v]) => ({
+        market_id,
+        net_shares: v.shares,
+        avg_price: v.shares !== 0 ? v.cost / v.shares : 0,
       })),
     );
     setLoading(false);
@@ -54,12 +52,11 @@ function PositionsPage() {
 
   return (
     <>
-      <PageHeader title="Positions" description="Aggregated exposure derived from filled trades." />
+      <PageHeader title="Positions" description="Aggregated exposure derived from open trades." />
       <TableView
         columns={[
-          { key: "symbol", header: "Symbol" },
           { key: "market_id", header: "Market" },
-          { key: "net_size", header: "Net size", render: (r) => r.net_size.toFixed(4) },
+          { key: "net_shares", header: "Net shares", render: (r) => r.net_shares.toFixed(4) },
           { key: "avg_price", header: "Avg price", render: (r) => r.avg_price.toFixed(4) },
         ]}
         rows={rows}

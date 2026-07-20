@@ -13,10 +13,12 @@ export const Route = createFileRoute("/_authenticated/health")({
 function HealthPage() {
   const { data, loading, error, refetch } = useSupabaseList<Record<string, unknown>>(
     "engine_heartbeats",
-    { limit: 50, orderBy: { column: "created_at" } },
+    { limit: 50, orderBy: { column: "last_seen_at" } },
   );
-  const latest = data[0] as { created_at?: string; status?: string } | undefined;
-  const ageSec = latest?.created_at ? Math.round((Date.now() - new Date(latest.created_at).getTime()) / 1000) : null;
+  const latest = data[0] as { last_seen_at?: string; status?: string } | undefined;
+  const ageSec = latest?.last_seen_at
+    ? Math.round((Date.now() - new Date(latest.last_seen_at).getTime()) / 1000)
+    : null;
   const healthy = ageSec !== null && ageSec < 60;
 
   return (
@@ -38,9 +40,10 @@ function HealthPage() {
         <TableView
           title="Recent heartbeats"
           columns={[
-            { key: "created_at", header: "Time" },
+            { key: "last_seen_at", header: "Time" },
             { key: "status", header: "Status", render: (r) => <Badge variant="outline">{String(r.status ?? "—")}</Badge> },
-            { key: "message", header: "Message" },
+            { key: "mode", header: "Mode" },
+            { key: "version", header: "Version" },
           ]}
           rows={data}
           loading={loading}

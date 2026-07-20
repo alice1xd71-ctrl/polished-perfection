@@ -11,11 +11,11 @@ export const Route = createFileRoute("/_authenticated/analytics")({
 });
 
 function AnalyticsPage() {
-  const { data: latency, loading } = useSupabaseList<{ latency_ms: number | null }>(
+  const { data: latency, loading } = useSupabaseList<{ total_ms: number | null }>(
     "latency_samples",
-    { select: "latency_ms", limit: 1000, orderBy: { column: "created_at" } },
+    { select: "total_ms", limit: 1000, orderBy: { column: "created_at" } },
   );
-  const nums = latency.map((l) => Number(l.latency_ms ?? 0)).filter((n) => n > 0);
+  const nums = latency.map((l) => Number(l.total_ms ?? 0)).filter((n) => n > 0);
   const avg = nums.length ? nums.reduce((a, b) => a + b, 0) / nums.length : 0;
   const max = nums.length ? Math.max(...nums) : 0;
   const min = nums.length ? Math.min(...nums) : 0;
@@ -24,9 +24,9 @@ function AnalyticsPage() {
     <>
       <PageHeader title="Analytics" description="Performance and latency metrics." />
       <div className="grid gap-4 sm:grid-cols-3">
-        <StatCard label="Avg latency" value={loading ? "…" : `${avg.toFixed(0)} ms`} />
-        <StatCard label="Min latency" value={loading ? "…" : `${min.toFixed(0)} ms`} />
-        <StatCard label="Max latency" value={loading ? "…" : `${max.toFixed(0)} ms`} />
+        <StatCard label="Avg total latency" value={loading ? "…" : `${avg.toFixed(0)} ms`} />
+        <StatCard label="Min" value={loading ? "…" : `${min.toFixed(0)} ms`} />
+        <StatCard label="Max" value={loading ? "…" : `${max.toFixed(0)} ms`} />
       </div>
       <div className="mt-6">
         <DataCard title="Latency distribution" description="Chart placeholder — samples over time.">

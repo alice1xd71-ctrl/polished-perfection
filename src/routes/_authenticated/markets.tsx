@@ -9,10 +9,9 @@ export const Route = createFileRoute("/_authenticated/markets")({
 });
 
 function MarketsPage() {
-  // Distinct markets appear in order_intents and trades — placeholder view.
-  const { data, loading, error, refetch } = useSupabaseList<{ market_id: string | null; symbol: string | null; created_at: string }>(
+  const { data, loading, error, refetch } = useSupabaseList<Record<string, unknown>>(
     "order_intents",
-    { select: "market_id,symbol,created_at", limit: 100, orderBy: { column: "created_at" } },
+    { select: "market_id,token_id,created_at_ms", limit: 100, orderBy: { column: "created_at_ms" } },
   );
 
   return (
@@ -20,9 +19,9 @@ function MarketsPage() {
       <PageHeader title="Markets" description="Markets discovered by the trading engine." />
       <TableView
         columns={[
-          { key: "symbol", header: "Symbol" },
           { key: "market_id", header: "Market ID" },
-          { key: "created_at", header: "First seen" },
+          { key: "token_id", header: "Token" },
+          { key: "created_at_ms", header: "First seen (ms)" },
         ]}
         rows={data}
         loading={loading}

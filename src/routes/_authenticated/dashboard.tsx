@@ -22,7 +22,7 @@ function DashboardPage() {
         supabase.from("trades").select("id", { count: "exact", head: true }),
         supabase.from("order_intents").select("id", { count: "exact", head: true }),
         supabase.from("strategy_profiles").select("id", { count: "exact", head: true }),
-        supabase.from("engine_heartbeats").select("id", { count: "exact", head: true }),
+        supabase.from("engine_heartbeats").select("user_id", { count: "exact", head: true }),
       ]);
       setCounts({
         trades: t.count?.toLocaleString() ?? "0",
@@ -41,9 +41,9 @@ function DashboardPage() {
       />
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard label="Trades" value={counts.trades} hint="All time" />
-        <StatCard label="Open orders" value={counts.orders} hint="Intent queue" />
+        <StatCard label="Order intents" value={counts.orders} hint="Queue" />
         <StatCard label="Profiles" value={counts.profiles} hint="Strategy snapshots" />
-        <StatCard label="Heartbeats" value={counts.beats} hint="Engine pings" />
+        <StatCard label="Engines" value={counts.beats} hint="Reporting heartbeats" />
       </div>
 
       <div className="mt-6 grid gap-4 lg:grid-cols-2">
