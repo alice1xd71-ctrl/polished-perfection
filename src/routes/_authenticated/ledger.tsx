@@ -59,7 +59,7 @@ function LedgerPage() {
                 <ExternalLink className="h-3.5 w-3.5" />
               </a>
             </Button>
-          ) : null },
+          ) : <>—</> },
         ]}
         rows={rows as unknown as Record<string, unknown>[]}
         loading={loading}
