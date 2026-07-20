@@ -24,9 +24,11 @@ import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authen
 import { Route as AuthenticatedMarketsRouteImport } from './routes/_authenticated/markets'
 import { Route as AuthenticatedLedgerRouteImport } from './routes/_authenticated/ledger'
 import { Route as AuthenticatedHealthRouteImport } from './routes/_authenticated/health'
+import { Route as AuthenticatedDiagnosticsRouteImport } from './routes/_authenticated/diagnostics'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAnalyticsRouteImport } from './routes/_authenticated/analytics'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as ApiPublicHealthRouteImport } from './routes/api/public/health'
 import { Route as ApiPublicEngineActionRouteImport } from './routes/api/public/engine/$action'
 
 const AuthRoute = AuthRouteImport.update({
@@ -106,6 +108,12 @@ const AuthenticatedHealthRoute = AuthenticatedHealthRouteImport.update({
   path: '/health',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedDiagnosticsRoute =
+  AuthenticatedDiagnosticsRouteImport.update({
+    id: '/diagnostics',
+    path: '/diagnostics',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -121,6 +129,11 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ApiPublicHealthRoute = ApiPublicHealthRouteImport.update({
+  id: '/api/public/health',
+  path: '/api/public/health',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicEngineActionRoute = ApiPublicEngineActionRouteImport.update({
   id: '/api/public/engine/$action',
   path: '/api/public/engine/$action',
@@ -133,6 +146,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRoute
   '/analytics': typeof AuthenticatedAnalyticsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/diagnostics': typeof AuthenticatedDiagnosticsRoute
   '/health': typeof AuthenticatedHealthRoute
   '/ledger': typeof AuthenticatedLedgerRoute
   '/markets': typeof AuthenticatedMarketsRoute
@@ -145,6 +159,7 @@ export interface FileRoutesByFullPath {
   '/standing-orders': typeof AuthenticatedStandingOrdersRoute
   '/strategy-profiles': typeof AuthenticatedStrategyProfilesRoute
   '/trades': typeof AuthenticatedTradesRoute
+  '/api/public/health': typeof ApiPublicHealthRoute
   '/api/public/engine/$action': typeof ApiPublicEngineActionRoute
 }
 export interface FileRoutesByTo {
@@ -153,6 +168,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AuthenticatedAdminRoute
   '/analytics': typeof AuthenticatedAnalyticsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/diagnostics': typeof AuthenticatedDiagnosticsRoute
   '/health': typeof AuthenticatedHealthRoute
   '/ledger': typeof AuthenticatedLedgerRoute
   '/markets': typeof AuthenticatedMarketsRoute
@@ -165,6 +181,7 @@ export interface FileRoutesByTo {
   '/standing-orders': typeof AuthenticatedStandingOrdersRoute
   '/strategy-profiles': typeof AuthenticatedStrategyProfilesRoute
   '/trades': typeof AuthenticatedTradesRoute
+  '/api/public/health': typeof ApiPublicHealthRoute
   '/api/public/engine/$action': typeof ApiPublicEngineActionRoute
 }
 export interface FileRoutesById {
@@ -175,6 +192,7 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/analytics': typeof AuthenticatedAnalyticsRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/diagnostics': typeof AuthenticatedDiagnosticsRoute
   '/_authenticated/health': typeof AuthenticatedHealthRoute
   '/_authenticated/ledger': typeof AuthenticatedLedgerRoute
   '/_authenticated/markets': typeof AuthenticatedMarketsRoute
@@ -187,6 +205,7 @@ export interface FileRoutesById {
   '/_authenticated/standing-orders': typeof AuthenticatedStandingOrdersRoute
   '/_authenticated/strategy-profiles': typeof AuthenticatedStrategyProfilesRoute
   '/_authenticated/trades': typeof AuthenticatedTradesRoute
+  '/api/public/health': typeof ApiPublicHealthRoute
   '/api/public/engine/$action': typeof ApiPublicEngineActionRoute
 }
 export interface FileRouteTypes {
@@ -197,6 +216,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/analytics'
     | '/dashboard'
+    | '/diagnostics'
     | '/health'
     | '/ledger'
     | '/markets'
@@ -209,6 +229,7 @@ export interface FileRouteTypes {
     | '/standing-orders'
     | '/strategy-profiles'
     | '/trades'
+    | '/api/public/health'
     | '/api/public/engine/$action'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -217,6 +238,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/analytics'
     | '/dashboard'
+    | '/diagnostics'
     | '/health'
     | '/ledger'
     | '/markets'
@@ -229,6 +251,7 @@ export interface FileRouteTypes {
     | '/standing-orders'
     | '/strategy-profiles'
     | '/trades'
+    | '/api/public/health'
     | '/api/public/engine/$action'
   id:
     | '__root__'
@@ -238,6 +261,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/_authenticated/analytics'
     | '/_authenticated/dashboard'
+    | '/_authenticated/diagnostics'
     | '/_authenticated/health'
     | '/_authenticated/ledger'
     | '/_authenticated/markets'
@@ -250,6 +274,7 @@ export interface FileRouteTypes {
     | '/_authenticated/standing-orders'
     | '/_authenticated/strategy-profiles'
     | '/_authenticated/trades'
+    | '/api/public/health'
     | '/api/public/engine/$action'
   fileRoutesById: FileRoutesById
 }
@@ -257,6 +282,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ApiPublicHealthRoute: typeof ApiPublicHealthRoute
   ApiPublicEngineActionRoute: typeof ApiPublicEngineActionRoute
 }
 
@@ -367,6 +393,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedHealthRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/diagnostics': {
+      id: '/_authenticated/diagnostics'
+      path: '/diagnostics'
+      fullPath: '/diagnostics'
+      preLoaderRoute: typeof AuthenticatedDiagnosticsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
@@ -388,6 +421,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/health': {
+      id: '/api/public/health'
+      path: '/api/public/health'
+      fullPath: '/api/public/health'
+      preLoaderRoute: typeof ApiPublicHealthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/engine/$action': {
       id: '/api/public/engine/$action'
       path: '/api/public/engine/$action'
@@ -402,6 +442,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedAnalyticsRoute: typeof AuthenticatedAnalyticsRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedDiagnosticsRoute: typeof AuthenticatedDiagnosticsRoute
   AuthenticatedHealthRoute: typeof AuthenticatedHealthRoute
   AuthenticatedLedgerRoute: typeof AuthenticatedLedgerRoute
   AuthenticatedMarketsRoute: typeof AuthenticatedMarketsRoute
@@ -420,6 +461,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedAnalyticsRoute: AuthenticatedAnalyticsRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedDiagnosticsRoute: AuthenticatedDiagnosticsRoute,
   AuthenticatedHealthRoute: AuthenticatedHealthRoute,
   AuthenticatedLedgerRoute: AuthenticatedLedgerRoute,
   AuthenticatedMarketsRoute: AuthenticatedMarketsRoute,
@@ -441,6 +483,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  ApiPublicHealthRoute: ApiPublicHealthRoute,
   ApiPublicEngineActionRoute: ApiPublicEngineActionRoute,
 }
 export const routeTree = rootRouteImport
