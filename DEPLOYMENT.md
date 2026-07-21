@@ -34,6 +34,7 @@ All routes below require `Authorization: Bearer <ENGINE_API_TOKEN>` and
 | Method | Path                                       | Purpose                             |
 | ------ | ------------------------------------------ | ----------------------------------- |
 | GET    | `/api/public/engine/health`                | Unauthenticated health probe        |
+| GET/POST | `/api/public/engine/whoami`              | Auth diagnostic; returns structured success/reason |
 | POST   | `/api/public/engine/register`              | Announce a mode + `control_url`     |
 | POST   | `/api/public/engine/heartbeat`             | Uptime / CPU / memory / latency     |
 | POST   | `/api/public/engine/event`                 | Structured engine events            |
@@ -49,6 +50,10 @@ All routes below require `Authorization: Bearer <ENGINE_API_TOKEN>` and
 | POST   | `/api/public/engine/notification`          | User-visible notifications          |
 | POST   | `/api/public/engine/contract_archive`      | Closed-contract summaries           |
 | POST   | `/api/public/engine/audit`                 | Audit trail entries                 |
+
+Authentication failures always return a structured JSON body like
+`{"success":false,"reason":"token_value_mismatch"}`. They never return only
+`{"error":"unauthorized"}` and never include secret token bytes.
 
 ---
 
@@ -183,15 +188,17 @@ dashboard's Engine Manager lights up.
 
 ## Verifying the pipeline
 
-1. `curl https://<dashboard>/api/public/engine/health` → `{ ok: true }`
-2. Sign in to the dashboard → note your user id in the URL of `/settings`.
-3. Set `ENGINE_USER_ID` in the P1 env files to that value.
-4. `systemctl restart p1-paper p1-live` (or `pm2 restart all`).
-5. Dashboard → `/dashboard`:
+1. `curl https://<dashboard>/api/version` → latest commit/build metadata.
+2. `curl https://<dashboard>/api/public/engine/health` → `{ ok: true }`
+3. `curl -X POST https://<dashboard>/api/public/engine/whoami -H "Authorization: Bearer $ENGINE_API_TOKEN" -H "x-user-id: $ENGINE_USER_ID"` → `{ "success": true, ... }` or a structured `{ "success": false, "reason": "..." }` diagnostic.
+4. Sign in to the dashboard → note your user id in the URL of `/settings`.
+5. Set `ENGINE_USER_ID` in the P1 env files to that value.
+6. `systemctl restart p1-paper p1-live` (or `pm2 restart all`).
+7. Dashboard → `/dashboard`:
    - Engine Manager shows PAPER_V1 and LIVE_V2 with heartbeats.
    - Feed / WebSocket pills leave `Waiting` once P1 posts `feed_status`.
    - BTC 5-minute market card populates on the first `market` push.
-6. Click **Start** on a card → P1 receives `POST /api/v2/bot/control`
+8. Click **Start** on a card → P1 receives `POST /api/v2/bot/control`
    with `{ action: "start", mode: "paper" }`.
 
 ## Troubleshooting
@@ -201,5 +208,5 @@ dashboard's Engine Manager lights up.
   HTTPS only). Verify DNS + certificate.
 - **Cards stay empty for one mode** — only one P1 process is running.
   Start the sibling with `ENGINE_MODE` set to the other value.
-- **`unauthorized` in engine logs** — `ENGINE_API_TOKEN` mismatch. Rotate
-  and set the identical value on both sides.
+- **`token_value_mismatch` / `token_length_mismatch` in engine logs** —
+  `ENGINE_API_TOKEN` mismatch. Rotate and set the identical value on both sides.
