@@ -304,28 +304,48 @@ export const Route = createFileRoute("/api/public/engine/$action")({
       OPTIONS: async () => new Response(null, { status: 204, headers: CORS }),
       GET: async ({ request, params }) => {
         // Public health probe.
-        if (params.action === "health") return withCors(engineJson({ ok: true, ts: Date.now() }));
-        // Authenticated diagnostic: returns the resolved user_id if creds match.
+        if (params.action === "health") {
+          return withCors(engineJson({ success: true, ok: true, ts: Date.now() }));
+        }
+        // Authenticated diagnostic (GET or POST both accepted).
         if (params.action === "whoami") {
           const auth = requireEngineAuth(request);
           if (!auth.ok) return withCors(auth.response);
-          return withCors(engineJson({ ok: true, user_id: auth.userId, ts: Date.now() }));
+          return withCors(
+            engineJson({ success: true, ok: true, user_id: auth.userId, ts: Date.now() }),
+          );
         }
-        return withCors(engineJson({ error: "method_not_allowed" }, 405));
+        return withCors(
+          engineJson({ success: false, error: "method_not_allowed", reason: "use_post" }, 405),
+        );
       },
 
       POST: async ({ request, params }) => {
         const auth = requireEngineAuth(request);
         if (!auth.ok) return withCors(auth.response);
         const action = params.action;
+
+        // whoami is a pure auth diagnostic — accept POST too.
+        if (action === "whoami") {
+          return withCors(
+            engineJson({ success: true, ok: true, user_id: auth.userId, ts: Date.now() }),
+          );
+        }
+
         const handler = handlers[action];
-        if (!handler) return withCors(engineJson({ error: "unknown_action", action }, 404));
+        if (!handler) {
+          return withCors(
+            engineJson({ success: false, error: "unknown_action", reason: "unknown_action", action }, 404),
+          );
+        }
         let body: Record<string, unknown> = {};
         try {
           const raw = await request.text();
           body = raw ? (JSON.parse(raw) as Record<string, unknown>) : {};
         } catch {
-          return withCors(engineJson({ error: "invalid_json" }, 400));
+          return withCors(
+            engineJson({ success: false, error: "invalid_json", reason: "invalid_json" }, 400),
+          );
         }
         try {
           const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -333,7 +353,10 @@ export const Route = createFileRoute("/api/public/engine/$action")({
           return withCors(res);
         } catch (err) {
           const message = err instanceof Error ? err.message : String(err);
-          return withCors(engineJson({ error: "handler_failed", message }, 500));
+          console.error(`[engine] handler_failed action=${action}: ${message}`);
+          return withCors(
+            engineJson({ success: false, error: "handler_failed", reason: "handler_exception", message }, 500),
+          );
         }
       },
     },
