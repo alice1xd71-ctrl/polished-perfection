@@ -302,11 +302,18 @@ export const Route = createFileRoute("/api/public/engine/$action")({
   server: {
     handlers: {
       OPTIONS: async () => new Response(null, { status: 204, headers: CORS }),
-      GET: async ({ params }) => {
-        // Public health probe only.
+      GET: async ({ request, params }) => {
+        // Public health probe.
         if (params.action === "health") return withCors(engineJson({ ok: true, ts: Date.now() }));
+        // Authenticated diagnostic: returns the resolved user_id if creds match.
+        if (params.action === "whoami") {
+          const auth = requireEngineAuth(request);
+          if (!auth.ok) return withCors(auth.response);
+          return withCors(engineJson({ ok: true, user_id: auth.userId, ts: Date.now() }));
+        }
         return withCors(engineJson({ error: "method_not_allowed" }, 405));
       },
+
       POST: async ({ request, params }) => {
         const auth = requireEngineAuth(request);
         if (!auth.ok) return withCors(auth.response);
