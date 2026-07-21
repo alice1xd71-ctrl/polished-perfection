@@ -10,10 +10,10 @@
  *   x-user-id: <auth.users.id>
  *
  * On failure the response body includes:
- *   { success: false, error: "unauthorized", reason: "<code>", hint?: "..." }
+ *   { success: false, reason: "<code>", hint?: "..." }
  *
- * Reason codes never leak the token itself — only lengths and first/last 2
- * characters — so operators can diff dashboard vs P1 .env safely.
+ * Reason codes and logs never leak token bytes. Logs include only booleans and
+ * lengths so operators can diagnose production deployment mismatch safely.
  */
 export type EngineAuthOk = { ok: true; userId: string };
 export type EngineAuthErr = { ok: false; response: Response };
@@ -24,12 +24,6 @@ export function engineJson(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), { status, headers: JSON_HEADERS });
 }
 
-export function maskToken(t: string | null | undefined): string {
-  if (!t) return "<empty>";
-  if (t.length <= 6) return `<len=${t.length}>`;
-  return `${t.slice(0, 2)}…${t.slice(-2)} (len=${t.length})`;
-}
-
 function fail(
   status: number,
   reason: string,
@@ -37,10 +31,7 @@ function fail(
 ): EngineAuthErr {
   return {
     ok: false,
-    response: engineJson(
-      { success: false, error: status === 401 ? "unauthorized" : "bad_request", reason, ...extra },
-      status,
-    ),
+    response: engineJson({ success: false, reason, ...extra }, status),
   };
 }
 
@@ -50,13 +41,13 @@ function logAuthDebug(fields: Record<string, unknown>): void {
 }
 
 export function requireEngineAuth(request: Request): EngineAuthOk | EngineAuthErr {
-  const token = process.env.ENGINE_API_TOKEN;
+  const token = process.env.ENGINE_API_TOKEN?.trim();
   const auth = request.headers.get("authorization") ?? "";
   const userId = request.headers.get("x-user-id");
 
   const authPresent = auth.length > 0;
-  const bearerValid = auth.startsWith("Bearer ");
-  const received = bearerValid ? auth.slice("Bearer ".length) : "";
+  const bearerValid = /^Bearer\s+\S+$/i.test(auth);
+  const received = bearerValid ? auth.replace(/^Bearer\s+/i, "") : "";
   const receivedLen = received.length;
   const configuredLen = token?.length ?? 0;
   const userIdPresent = !!userId;
@@ -84,16 +75,24 @@ export function requireEngineAuth(request: Request): EngineAuthOk | EngineAuthEr
     return fail(401, "missing_authorization_header");
   }
   if (!bearerValid) {
-    logAuthDebug({ ...baseDebug, reason: "authorization_not_bearer" });
-    return fail(401, "authorization_not_bearer", {
+    logAuthDebug({ ...baseDebug, reason: "invalid_bearer_format" });
+    return fail(401, "invalid_bearer_format", {
       hint: "Header must be: Authorization: Bearer <ENGINE_API_TOKEN>",
     });
+  }
+  if (!userIdPresent) {
+    logAuthDebug({ ...baseDebug, reason: "missing_user_id" });
+    return fail(400, "missing_user_id", {
+      hint: "Engine must send x-user-id: <supabase auth.users.id>",
+    });
+  }
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(userId!)) {
+    logAuthDebug({ ...baseDebug, reason: "invalid_user_id_format" });
+    return fail(400, "invalid_user_id_format");
   }
   if (receivedLen !== configuredLen) {
     logAuthDebug({ ...baseDebug, reason: "token_length_mismatch" });
     return fail(401, "token_length_mismatch", {
-      received_token: maskToken(received),
-      expected_token: maskToken(token),
       hint: "The ENGINE_API_TOKEN on the dashboard does not match P1 .env. Values must be byte-for-byte identical (no trailing newline / quotes).",
     });
   }
@@ -104,22 +103,10 @@ export function requireEngineAuth(request: Request): EngineAuthOk | EngineAuthEr
   if (mismatch !== 0) {
     logAuthDebug({ ...baseDebug, reason: "token_value_mismatch" });
     return fail(401, "token_value_mismatch", {
-      received_token: maskToken(received),
-      expected_token: maskToken(token),
       hint: "Same length, different contents. Regenerate one token and paste identical values into the dashboard secret and P1 .env (and BOT_CONTROL_TOKEN).",
     });
   }
 
-  if (!userIdPresent) {
-    logAuthDebug({ ...baseDebug, reason: "missing_user_id_header" });
-    return fail(400, "missing_user_id_header", {
-      hint: "Engine must send x-user-id: <supabase auth.users.id>",
-    });
-  }
-  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(userId!)) {
-    logAuthDebug({ ...baseDebug, reason: "invalid_user_id_format" });
-    return fail(400, "invalid_user_id_format", { received: userId });
-  }
-
+  logAuthDebug({ ...baseDebug, reason: "authenticated" });
   return { ok: true, userId: userId! };
 }

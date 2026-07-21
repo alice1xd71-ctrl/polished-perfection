@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiVersionRouteImport } from './routes/api/version'
 import { Route as AuthenticatedTradesRouteImport } from './routes/_authenticated/trades'
 import { Route as AuthenticatedStrategyProfilesRouteImport } from './routes/_authenticated/strategy-profiles'
 import { Route as AuthenticatedStandingOrdersRouteImport } from './routes/_authenticated/standing-orders'
@@ -43,6 +44,11 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiVersionRoute = ApiVersionRouteImport.update({
+  id: '/api/version',
+  path: '/api/version',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedTradesRoute = AuthenticatedTradesRouteImport.update({
@@ -159,6 +165,7 @@ export interface FileRoutesByFullPath {
   '/standing-orders': typeof AuthenticatedStandingOrdersRoute
   '/strategy-profiles': typeof AuthenticatedStrategyProfilesRoute
   '/trades': typeof AuthenticatedTradesRoute
+  '/api/version': typeof ApiVersionRoute
   '/api/public/health': typeof ApiPublicHealthRoute
   '/api/public/engine/$action': typeof ApiPublicEngineActionRoute
 }
@@ -181,6 +188,7 @@ export interface FileRoutesByTo {
   '/standing-orders': typeof AuthenticatedStandingOrdersRoute
   '/strategy-profiles': typeof AuthenticatedStrategyProfilesRoute
   '/trades': typeof AuthenticatedTradesRoute
+  '/api/version': typeof ApiVersionRoute
   '/api/public/health': typeof ApiPublicHealthRoute
   '/api/public/engine/$action': typeof ApiPublicEngineActionRoute
 }
@@ -205,6 +213,7 @@ export interface FileRoutesById {
   '/_authenticated/standing-orders': typeof AuthenticatedStandingOrdersRoute
   '/_authenticated/strategy-profiles': typeof AuthenticatedStrategyProfilesRoute
   '/_authenticated/trades': typeof AuthenticatedTradesRoute
+  '/api/version': typeof ApiVersionRoute
   '/api/public/health': typeof ApiPublicHealthRoute
   '/api/public/engine/$action': typeof ApiPublicEngineActionRoute
 }
@@ -229,6 +238,7 @@ export interface FileRouteTypes {
     | '/standing-orders'
     | '/strategy-profiles'
     | '/trades'
+    | '/api/version'
     | '/api/public/health'
     | '/api/public/engine/$action'
   fileRoutesByTo: FileRoutesByTo
@@ -251,6 +261,7 @@ export interface FileRouteTypes {
     | '/standing-orders'
     | '/strategy-profiles'
     | '/trades'
+    | '/api/version'
     | '/api/public/health'
     | '/api/public/engine/$action'
   id:
@@ -274,6 +285,7 @@ export interface FileRouteTypes {
     | '/_authenticated/standing-orders'
     | '/_authenticated/strategy-profiles'
     | '/_authenticated/trades'
+    | '/api/version'
     | '/api/public/health'
     | '/api/public/engine/$action'
   fileRoutesById: FileRoutesById
@@ -282,6 +294,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ApiVersionRoute: typeof ApiVersionRoute
   ApiPublicHealthRoute: typeof ApiPublicHealthRoute
   ApiPublicEngineActionRoute: typeof ApiPublicEngineActionRoute
 }
@@ -307,6 +320,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/version': {
+      id: '/api/version'
+      path: '/api/version'
+      fullPath: '/api/version'
+      preLoaderRoute: typeof ApiVersionRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/trades': {
@@ -483,6 +503,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  ApiVersionRoute: ApiVersionRoute,
   ApiPublicHealthRoute: ApiPublicHealthRoute,
   ApiPublicEngineActionRoute: ApiPublicEngineActionRoute,
 }

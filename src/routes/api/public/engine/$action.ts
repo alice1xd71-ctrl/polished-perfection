@@ -17,7 +17,7 @@ import { requireEngineAuth, engineJson } from "@/lib/engine-auth.server";
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type, Authorization, x-user-id",
   "Access-Control-Max-Age": "86400",
 } as const;
@@ -40,7 +40,7 @@ const handlers: Record<string, Handler> = {
   async register(userId, body, admin) {
     const mode = body.engine_mode === "live" ? "live" : body.engine_mode === "paper" ? "paper" : null;
     if (!mode) {
-      return engineJson({ error: "invalid_engine_mode", hint: "expected 'paper' or 'live'" }, 400);
+      return engineJson({ success: false, reason: "invalid_engine_mode", hint: "expected 'paper' or 'live'" }, 400);
     }
     const controlUrlRaw = body.control_url ?? null;
     let controlUrl: string | null = null;
@@ -51,7 +51,7 @@ const handlers: Record<string, Handler> = {
         if (u.protocol !== "http:" && u.protocol !== "https:") throw new Error("bad_protocol");
         controlUrl = u.toString().replace(/\/$/, "");
       } catch {
-        return engineJson({ error: "invalid_control_url", value: s }, 400);
+        return engineJson({ success: false, reason: "invalid_control_url", value: s }, 400);
       }
     }
     const { data, error } = await admin
@@ -76,8 +76,8 @@ const handlers: Record<string, Handler> = {
       )
       .select()
       .single();
-    if (error) return engineJson({ error: error.message }, 500);
-    return engineJson({ ok: true, engine_instance: data });
+    if (error) return engineJson({ success: false, reason: "database_write_failed", message: error.message }, 500);
+    return engineJson({ success: true, ok: true, engine_instance: data });
   },
 
 
@@ -127,8 +127,8 @@ const handlers: Record<string, Handler> = {
       execution_id: body.execution_id ?? null,
       duration_ms: body.duration_ms ?? null,
     });
-    if (error) return engineJson({ error: error.message }, 500);
-    return engineJson({ ok: true });
+    if (error) return engineJson({ success: false, reason: "database_write_failed", message: error.message }, 500);
+    return engineJson({ success: true, ok: true });
   },
 
   async feed_status(userId, body, admin) {
@@ -143,8 +143,8 @@ const handlers: Record<string, Handler> = {
       },
       { onConflict: "user_id,feed" },
     );
-    if (error) return engineJson({ error: error.message }, 500);
-    return engineJson({ ok: true });
+    if (error) return engineJson({ success: false, reason: "database_write_failed", message: error.message }, 500);
+    return engineJson({ success: true, ok: true });
   },
 
   async wallet(userId, body, admin) {
@@ -158,8 +158,8 @@ const handlers: Record<string, Handler> = {
       },
       { onConflict: "user_id" },
     );
-    if (error) return engineJson({ error: error.message }, 500);
-    return engineJson({ ok: true });
+    if (error) return engineJson({ success: false, reason: "database_write_failed", message: error.message }, 500);
+    return engineJson({ success: true, ok: true });
   },
 
   async market(userId, body, admin) {
@@ -186,8 +186,8 @@ const handlers: Record<string, Handler> = {
       },
       { onConflict: "user_id,market_id" },
     );
-    if (error) return engineJson({ error: error.message }, 500);
-    return engineJson({ ok: true });
+    if (error) return engineJson({ success: false, reason: "database_write_failed", message: error.message }, 500);
+    return engineJson({ success: true, ok: true });
   },
 
   async order(userId, body, admin) {
@@ -209,8 +209,8 @@ const handlers: Record<string, Handler> = {
       },
       { onConflict: "user_id,client_order_id" },
     );
-    if (error) return engineJson({ error: error.message }, 500);
-    return engineJson({ ok: true });
+    if (error) return engineJson({ success: false, reason: "database_write_failed", message: error.message }, 500);
+    return engineJson({ success: true, ok: true });
   },
 
   async trade(userId, body, admin) {
@@ -218,20 +218,20 @@ const handlers: Record<string, Handler> = {
       user_id: userId,
       ...body,
     });
-    if (error) return engineJson({ error: error.message }, 500);
-    return engineJson({ ok: true });
+    if (error) return engineJson({ success: false, reason: "database_write_failed", message: error.message }, 500);
+    return engineJson({ success: true, ok: true });
   },
 
   async standing_order(userId, body, admin) {
     const id = body.id;
-    if (!id) return engineJson({ error: "missing_id" }, 400);
+    if (!id) return engineJson({ success: false, reason: "missing_id" }, 400);
     const { error } = await admin
       .from("standing_orders")
       .update({ ...body, id: undefined, user_id: undefined })
       .eq("id", id)
       .eq("user_id", userId);
-    if (error) return engineJson({ error: error.message }, 500);
-    return engineJson({ ok: true });
+    if (error) return engineJson({ success: false, reason: "database_write_failed", message: error.message }, 500);
+    return engineJson({ success: true, ok: true });
   },
 
   async standing_order_event(userId, body, admin) {
@@ -239,8 +239,8 @@ const handlers: Record<string, Handler> = {
       user_id: userId,
       ...body,
     });
-    if (error) return engineJson({ error: error.message }, 500);
-    return engineJson({ ok: true });
+    if (error) return engineJson({ success: false, reason: "database_write_failed", message: error.message }, 500);
+    return engineJson({ success: true, ok: true });
   },
 
   async latency(userId, body, admin) {
@@ -249,8 +249,8 @@ const handlers: Record<string, Handler> = {
       ts_ms: Date.now(),
       ...body,
     });
-    if (error) return engineJson({ error: error.message }, 500);
-    return engineJson({ ok: true });
+    if (error) return engineJson({ success: false, reason: "database_write_failed", message: error.message }, 500);
+    return engineJson({ success: true, ok: true });
   },
 
   async log(userId, body, admin) {
@@ -259,8 +259,8 @@ const handlers: Record<string, Handler> = {
       ts_ms: Date.now(),
       ...body,
     });
-    if (error) return engineJson({ error: error.message }, 500);
-    return engineJson({ ok: true });
+    if (error) return engineJson({ success: false, reason: "database_write_failed", message: error.message }, 500);
+    return engineJson({ success: true, ok: true });
   },
 
   async notification(userId, body, admin) {
@@ -274,8 +274,8 @@ const handlers: Record<string, Handler> = {
       metadata: body.metadata ?? null,
       expires_at: body.expires_at ?? null,
     });
-    if (error) return engineJson({ error: error.message }, 500);
-    return engineJson({ ok: true });
+    if (error) return engineJson({ success: false, reason: "database_write_failed", message: error.message }, 500);
+    return engineJson({ success: true, ok: true });
   },
 
   async contract_archive(userId, body, admin) {
@@ -283,8 +283,8 @@ const handlers: Record<string, Handler> = {
       { user_id: userId, ...body },
       { onConflict: "user_id,market_id" },
     );
-    if (error) return engineJson({ error: error.message }, 500);
-    return engineJson({ ok: true });
+    if (error) return engineJson({ success: false, reason: "database_write_failed", message: error.message }, 500);
+    return engineJson({ success: true, ok: true });
   },
 
   async audit(userId, body, admin) {
@@ -293,8 +293,8 @@ const handlers: Record<string, Handler> = {
       ts_ms: Date.now(),
       ...body,
     });
-    if (error) return engineJson({ error: error.message }, 500);
-    return engineJson({ ok: true });
+    if (error) return engineJson({ success: false, reason: "database_write_failed", message: error.message }, 500);
+    return engineJson({ success: true, ok: true });
   },
 };
 
